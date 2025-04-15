@@ -1,5 +1,7 @@
 package vista;
 
+import controlador.MenuAControlador;
+
 public class MenuAVista extends javax.swing.JFrame {
 
     public MenuAVista() {
@@ -137,10 +139,12 @@ public class MenuAVista extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MenuAVista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
+    
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MenuAVista().setVisible(true);
+                MenuAVista vista = new MenuAVista();
+                new MenuAControlador(vista, "admin");
+                vista.setVisible(true);
             }
         });
     }

@@ -8,16 +8,16 @@ import javax.swing.JOptionPane;
 import modelo.InicioModelo;
 
 public class RegistroControlador {
-    private RegistroVista vista;
-    private RegistroModelo modelo;
-    private InicioVista inicioVista;
+    private final RegistroVista vista;
+    private final RegistroModelo modelo;
+    private final InicioVista inicioVista;
 
     public RegistroControlador(RegistroVista vista, RegistroModelo modelo, InicioVista inicioVista) {
         this.vista = vista;
         this.modelo = modelo;
         this.inicioVista = inicioVista;
         
-        //RADIO BUTTONS
+        //CONFIGURACION RADIO BUTTONS
         vista.getButtonGroup1().add(vista.getBotonNormal());
         vista.getButtonGroup1().add(vista.getBotonOro());
         vista.getBotonNormal().setSelected(true);
@@ -33,14 +33,16 @@ public class RegistroControlador {
         String nombre = vista.getCampoNombre().getText().trim();
         String usuario = vista.getCampoUsuario().getText().trim();
         String contra = vista.getCampoContra().getText().trim();
+        String tipoCliente = vista.getBotonNormal().isSelected() ? "NORMAL" : "ORO";
         
         if (validarCampos(dpi, nombre, usuario, contra)) {
-            if (modelo.registrarCliente(dpi, nombre, usuario, contra, "NORMAL")) {
+            if (modelo.registrarCliente(dpi, nombre, usuario, contra, tipoCliente)) {
+                JOptionPane.showMessageDialog(vista, "REGISTRO COMPLETADO CON EXITO", "EXITO", JOptionPane.INFORMATION_MESSAGE);
                 limpiarCampos();
-                JOptionPane.showMessageDialog(vista, 
-                    "REGISTRO COMPLETADO CON EXITO", "EXITO", JOptionPane.INFORMATION_MESSAGE);
+                regresarAInicio();
             } else {
-                JOptionPane.showMessageDialog(vista, "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(vista, 
+                    "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -55,12 +57,14 @@ public class RegistroControlador {
     
     private boolean validarCampos(String dpi, String nombre, String usuario, String contra) {
         if (dpi.isEmpty() || nombre.isEmpty() || usuario.isEmpty() || contra.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, 
+                "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
         if (usuario.equals(InicioModelo.ADMIN_USER) || usuario.equals(InicioModelo.MECANICO_USER)) {
-            JOptionPane.showMessageDialog(vista, "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, 
+                "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         

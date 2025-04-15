@@ -1,48 +1,55 @@
 package modelo;
 
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegistroModelo {
-    private Vector<String> dpiClientes;
-    private Vector<String> nombresCompletos;
-    private Vector<String> nombresUsuario;
-    private Vector<String> contrasenas;
-    private Vector<String> tiposCliente;
-    private Vector<Integer> serviciosRealizados;
+    private static RegistroModelo instancia;
+    private Map<String, Cliente> clientes;
     private String usuarioActual;
 
     public RegistroModelo() {
-        dpiClientes = new Vector<>();
-        nombresCompletos = new Vector<>();
-        nombresUsuario = new Vector<>();
-        contrasenas = new Vector<>();
-        tiposCliente = new Vector<>();
-        serviciosRealizados = new Vector<>();
+        clientes = new HashMap<>();
         usuarioActual = "";
     }
 
+    //OBTENER INSTANCIA UNICA
+    public static synchronized RegistroModelo getInstance() {
+        if (instancia == null) {
+            instancia = new RegistroModelo();
+        }
+        return instancia;
+    }
+
+    //CLASE PARA ALMACENAR DATOS DEL CLIENTE
+    private static class Cliente {
+        String dpi;
+        String nombreCompleto;
+        String contrasena;
+        String tipoCliente;
+        int serviciosRealizados;
+
+        public Cliente(String dpi, String nombreCompleto, String contrasena, String tipoCliente) {
+            this.dpi = dpi;
+            this.nombreCompleto = nombreCompleto;
+            this.contrasena = contrasena;
+            this.tipoCliente = tipoCliente;
+            this.serviciosRealizados = 0;
+        }
+    }
+
     public boolean registrarCliente(String dpi, String nombreCompleto, String usuario, String contrasena, String tipoCliente) {
-        //VERIFICAR SI EL USUARIO Y EXISTE
-        if (nombresUsuario.contains(usuario)) {
+        if (clientes.containsKey(usuario)) {
             return false;
         }
         
-        //GUARDAR DATOS INGRESADOS
-        dpiClientes.add(dpi);
-        nombresCompletos.add(nombreCompleto);
-        nombresUsuario.add(usuario);
-        contrasenas.add(contrasena); 
-        tiposCliente.add(tipoCliente);
-        serviciosRealizados.add(0);
+        clientes.put(usuario, new Cliente(dpi, nombreCompleto, contrasena, tipoCliente));
         return true;
     }
 
     public boolean verificarCredenciales(String usuario, String contrasena) {
-        //BUSCAR USUARIO
-        int index = nombresUsuario.indexOf(usuario);
-        
-        //VERIFICAR CREDENCIALES
-        if (index != -1 && contrasenas.get(index).equals(contrasena)) {
+        Cliente cliente = clientes.get(usuario);
+        if (cliente != null && cliente.contrasena.equals(contrasena)) {
             usuarioActual = usuario;
             return true;
         }
@@ -50,21 +57,21 @@ public class RegistroModelo {
     }
 
     public boolean puedeCambiarAOro(String usuario) {
-        int index = nombresUsuario.indexOf(usuario);
-        return index != -1 && serviciosRealizados.get(index) >= 4;
+        Cliente cliente = clientes.get(usuario);
+        return cliente != null && cliente.serviciosRealizados >= 4;
     }
 
     public void actualizarTipoCliente(String usuario, String nuevoTipo) {
-        int index = nombresUsuario.indexOf(usuario);
-        if (index != -1) {
-            tiposCliente.set(index, nuevoTipo);
+        Cliente cliente = clientes.get(usuario);
+        if (cliente != null) {
+            cliente.tipoCliente = nuevoTipo;
         }
     }
 
     public void incrementarServicios(String usuario) {
-        int index = nombresUsuario.indexOf(usuario);
-        if (index != -1) {
-            serviciosRealizados.set(index, serviciosRealizados.get(index) + 1);
+        Cliente cliente = clientes.get(usuario);
+        if (cliente != null) {
+            cliente.serviciosRealizados++;
         }
     }
 
@@ -77,6 +84,6 @@ public class RegistroModelo {
     }
 
     public boolean existeUsuario(String usuario) {
-        return nombresUsuario.contains(usuario);
+        return clientes.containsKey(usuario);
     }
 }

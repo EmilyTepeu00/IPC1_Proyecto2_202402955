@@ -10,9 +10,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
 public class InicioControlador {
-    private InicioVista vista;
-    private InicioModelo modelo;
-    private RegistroModelo registroModelo;
+    private final InicioVista vista;
+    private final InicioModelo modelo;
+    private final RegistroModelo registroModelo;
 
     public InicioControlador(InicioVista vista, InicioModelo modelo, RegistroModelo registroModelo) {
         this.vista = vista;
@@ -39,13 +39,16 @@ public class InicioControlador {
                 registroModelo.setUsuarioActual(usuario);
                 abrirMenuAdministrador();
                 break;
+            case "MECANICO":
+                registroModelo.setUsuarioActual(usuario);
+                abrirMenuAdministrador(); 
+                break;
             case "CLIENTE":
                 registroModelo.setUsuarioActual(usuario);
                 abrirMenuCliente();
                 break;
             default:
                 JOptionPane.showMessageDialog(vista, "USUARIO O CONTRASEÑA INCORRECTOS", "ERROR", JOptionPane.ERROR_MESSAGE);
-                //LIMPIAR CAMPOS
                 vista.getCampoContraseña().setText("");
         }
     }
@@ -69,9 +72,5 @@ public class InicioControlador {
         new RegistroControlador(registroVista, registroModelo, vista);
         vista.dispose();
         registroVista.setVisible(true);
-    }
-    
-    private void mostrarError(String mensaje) {
-        JOptionPane.showMessageDialog(vista, mensaje, "ERROR", JOptionPane.ERROR_MESSAGE);
     }
 }

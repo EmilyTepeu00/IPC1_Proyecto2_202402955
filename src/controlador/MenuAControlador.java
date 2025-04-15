@@ -2,6 +2,7 @@ package controlador;
 
 import vista.MenuAVista;
 import vista.InicioVista;
+import vista.RepuestosVista;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import modelo.InicioModelo;
@@ -20,18 +21,25 @@ public class MenuAControlador {
     }
     
     private void configurarBienvenida() {
-        String tipo = usuarioActual.equals(InicioModelo.ADMIN_USER) ? "Administrador" : "Mecánico";
+        String tipo = usuarioActual.equals(InicioModelo.ADMIN_USER) ? "ADMINISTRADOR" : "MECANICO";
         JOptionPane.showMessageDialog(vista, "BIENVENIDO " + tipo, "BIENVENIDO", 
             JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void configurarListeners() {
         vista.getBotonCerrar().addActionListener(this::cerrarSesion);
-        vista.getBotonRepuestos().addActionListener(e -> mostrarMensaje("Repuestos"));
+        vista.getBotonRepuestos().addActionListener(this::abrirRepuestos);
         vista.getBotonServicios().addActionListener(e -> mostrarMensaje("Servicios"));
         vista.getBotonClientes().addActionListener(e -> mostrarMensaje("Clientes"));
         vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
         vista.getBotonReporte().addActionListener(e -> mostrarMensaje("Reportes"));
+    }
+    
+    private void abrirRepuestos(ActionEvent e) {
+        RepuestosVista repuestosVista = new RepuestosVista();
+        new RepuestosControlador(repuestosVista);
+        repuestosVista.setVisible(true);
+        vista.setVisible(false);
     }
     
     private void cerrarSesion(ActionEvent e) {
