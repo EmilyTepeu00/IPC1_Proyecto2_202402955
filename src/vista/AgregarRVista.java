@@ -1,12 +1,66 @@
 package vista;
 
+import javax.swing.TransferHandler.TransferSupport;
+import javax.swing.TransferHandler;
+import java.awt.datatransfer.DataFlavor;
+
+
+
 public class AgregarRVista extends javax.swing.JFrame {
-    
-    private javax.swing.JLabel areaDrop;
 
     public AgregarRVista() {
         initComponents();
+        DragAndDrop();
     }
+    
+    //CONFIGURACION DEL DRAG AND DROP
+    private void DragAndDrop() {
+    areaDrop.setTransferHandler(new TransferHandler() {
+        @Override
+        public boolean canImport(TransferSupport support) {
+            return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+        }
+
+        @Override
+        public boolean importData(TransferSupport support) {
+            try {
+                java.util.List files = (java.util.List) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                java.io.File file = (java.io.File) files.get(0);
+
+                if (!file.getName().endsWith(".tmr")) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "EL ARCHIVO DEBE TENER EXTENSION .tmr", "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+
+                java.util.Scanner scanner = new java.util.Scanner(file);
+                if (scanner.hasNextLine()) {
+                    String linea = scanner.nextLine();
+                    String[] partes = linea.split("-");
+
+                    if (partes.length != 5) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "SE REQUIEREN 5 DATOS SEPARADOS POR '-'", "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+
+                    campoNombre.setText(partes[0]);
+                    campoMarca.setText(partes[1]);
+                    campoModelo.setText(partes[2]);
+                    campoExistencias.setText(partes[3]);
+                    campoPrecio.setText(partes[4]);
+
+                    return true;
+                }
+
+                scanner.close();
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(null, "ERROR AL PROCESAR EL ARCHIVO" + e.getMessage(), "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+
+            return false;
+        }
+    });
+    }
+
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -29,6 +83,7 @@ public class AgregarRVista extends javax.swing.JFrame {
         campoNombre = new javax.swing.JTextField();
         campoExistencias = new javax.swing.JTextField();
         botonAceptar = new javax.swing.JButton();
+        areaDrop = new javax.swing.JLabel();
 
         campoUsuario3.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
 
@@ -75,6 +130,10 @@ public class AgregarRVista extends javax.swing.JFrame {
         botonAceptar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         botonAceptar.setText("ACEPTAR");
 
+        areaDrop.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        areaDrop.setForeground(new java.awt.Color(153, 153, 153));
+        areaDrop.setText("Arrastre un archivo tmr aca");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -82,7 +141,9 @@ public class AgregarRVista extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(areaDrop, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonAceptar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonRegresar))
@@ -118,7 +179,7 @@ public class AgregarRVista extends javax.swing.JFrame {
                                         .addComponent(jLabel4)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(campoID, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 45, Short.MAX_VALUE)))
+                        .addGap(0, 50, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -150,10 +211,11 @@ public class AgregarRVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(campoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonRegresar)
-                    .addComponent(botonAceptar))
+                    .addComponent(botonAceptar)
+                    .addComponent(areaDrop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -219,6 +281,7 @@ public class AgregarRVista extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel areaDrop;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JTextField campoExistencias;

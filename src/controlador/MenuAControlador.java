@@ -3,6 +3,7 @@ package controlador;
 import vista.MenuAVista;
 import vista.InicioVista;
 import vista.RepuestosVista;
+import vista.ServiciosVista;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import modelo.InicioModelo;
@@ -29,7 +30,7 @@ public class MenuAControlador {
     private void configurarListeners() {
         vista.getBotonCerrar().addActionListener(this::cerrarSesion);
         vista.getBotonRepuestos().addActionListener(this::abrirRepuestos);
-        vista.getBotonServicios().addActionListener(e -> mostrarMensaje("Servicios"));
+        vista.getBotonServicios().addActionListener(e -> abrirServicios());
         vista.getBotonClientes().addActionListener(e -> mostrarMensaje("Clientes"));
         vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
         vista.getBotonReporte().addActionListener(e -> mostrarMensaje("Reportes"));
@@ -39,6 +40,13 @@ public class MenuAControlador {
         RepuestosVista repuestosVista = new RepuestosVista();
         new RepuestosControlador(repuestosVista);
         repuestosVista.setVisible(true);
+        vista.setVisible(false);
+    }
+    
+    private void abrirServicios() {
+        ServiciosVista serviciosVista = new ServiciosVista();
+        new ServiciosControlador(serviciosVista);
+        serviciosVista.setVisible(true);
         vista.setVisible(false);
     }
     

@@ -42,7 +42,7 @@ public class ModificarRControlador {
                 repuestoActual = RepuestosModelo.buscarRepuesto(id);
                 
                 if (repuestoActual != null) {
-                    // Llenar campos con los datos actuales
+                    //LLENAR CAMPOS CON DATOS ACTUALIZADOS
                     vista.getCampoNombre().setText(repuestoActual.getNombre());
                     vista.getCampoMarca().setText(repuestoActual.getMarca());
                     vista.getCampoModelo().setText(repuestoActual.getModelo());
