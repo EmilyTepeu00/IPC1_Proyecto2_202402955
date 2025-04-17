@@ -144,7 +144,7 @@ public class AgregarSVista extends javax.swing.JFrame {
 
         areaDrop.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         areaDrop.setForeground(new java.awt.Color(153, 153, 153));
-        areaDrop.setText("Arrastre un archivo tmr aca");
+        areaDrop.setText("Arrastre un archivo tms aca");
 
         jLabel8.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel8.setText("REPUESTO:");
@@ -160,8 +160,8 @@ public class AgregarSVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(areaDrop, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(areaDrop, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonAceptar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonRegresar))

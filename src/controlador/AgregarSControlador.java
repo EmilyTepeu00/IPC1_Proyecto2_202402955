@@ -38,7 +38,7 @@ public class AgregarSControlador {
     
     private void agregarServicio(ActionEvent e) {
         try {
-            //VALIDAR CAMPOS BASICOS
+            //VALIDAR CAMPOS VACIOS
             if (!validarCampos()) return;
             
             String nombre = vista.getCampoNombre().getText().trim();
@@ -72,7 +72,7 @@ public class AgregarSControlador {
                 JOptionPane.showMessageDialog(vista, "ERROR AL ASIGNAR EL REPUESTO", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vista, "INGRESE VALORES VALIDOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "INGRESE DATOS VALIDOS", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
     

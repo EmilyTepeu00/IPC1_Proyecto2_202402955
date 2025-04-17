@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import modelo.InicioModelo;
 import modelo.RegistroModelo;
+import vista.ClientesAutosVista;
 
 public class MenuAControlador {
     private MenuAVista vista;
@@ -31,7 +32,7 @@ public class MenuAControlador {
         vista.getBotonCerrar().addActionListener(this::cerrarSesion);
         vista.getBotonRepuestos().addActionListener(this::abrirRepuestos);
         vista.getBotonServicios().addActionListener(e -> abrirServicios());
-        vista.getBotonClientes().addActionListener(e -> mostrarMensaje("Clientes"));
+        vista.getBotonClientes().addActionListener(e -> abrirClientesAutos());
         vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
         vista.getBotonReporte().addActionListener(e -> mostrarMensaje("Reportes"));
     }
@@ -47,6 +48,13 @@ public class MenuAControlador {
         ServiciosVista serviciosVista = new ServiciosVista();
         new ServiciosControlador(serviciosVista);
         serviciosVista.setVisible(true);
+        vista.setVisible(false);
+    }
+    
+    private void abrirClientesAutos() {
+        ClientesAutosVista clientesAutosVista = new ClientesAutosVista();
+        new ClientesAutosControlador(clientesAutosVista);
+        clientesAutosVista.setVisible(true);
         vista.setVisible(false);
     }
     
