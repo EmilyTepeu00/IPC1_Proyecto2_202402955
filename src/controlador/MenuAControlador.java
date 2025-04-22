@@ -61,11 +61,12 @@ public class MenuAControlador {
     private void cerrarSesion(ActionEvent e) {
         int opcion = JOptionPane.showConfirmDialog(vista, "SEGURO QUE DESEA CERRAR SESION?", 
             "Confirmar", JOptionPane.YES_NO_OPTION);
-        
+    
         if (opcion == JOptionPane.YES_OPTION) {
             InicioVista inicio = new InicioVista();
-            InicioModelo modelo = new InicioModelo(new RegistroModelo());
-            new InicioControlador(inicio, modelo, new RegistroModelo());
+            RegistroModelo registro = RegistroModelo.getInstance();
+            InicioModelo modelo = new InicioModelo(registro);
+            new InicioControlador(inicio, modelo, registro);
             vista.dispose();
             inicio.setVisible(true);
         }

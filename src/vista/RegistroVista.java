@@ -1,8 +1,5 @@
 package vista;
 
-import modelo.RegistroModelo;
-import controlador.RegistroControlador;
-
 public class RegistroVista extends javax.swing.JFrame {
 
     public RegistroVista() {
@@ -13,11 +10,11 @@ public class RegistroVista extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu1 = new javax.swing.JPopupMenu();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        botonAceptar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        botonRegresar1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -26,20 +23,22 @@ public class RegistroVista extends javax.swing.JFrame {
         campoDPI = new javax.swing.JTextField();
         campoNombre = new javax.swing.JTextField();
         botonNormal = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
         botonOro = new javax.swing.JRadioButton();
-        botonAceptar = new javax.swing.JButton();
-        botonRegresar1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel3.setFont(new java.awt.Font("Arial Black", 0, 18)); // NOI18N
-        jLabel3.setText("REGISTRO");
 
         jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel1.setText("DPI:");
 
+        botonAceptar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        botonAceptar.setText("ACEPTAR");
+
         jLabel2.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel2.setText("NOMBRE USUARIO:");
+
+        botonRegresar1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        botonRegresar1.setText("REGRESAR");
 
         jLabel4.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel4.setText("CONTRASEÑA:");
@@ -61,14 +60,11 @@ public class RegistroVista extends javax.swing.JFrame {
         botonNormal.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         botonNormal.setText("NORMAL");
 
+        jLabel3.setFont(new java.awt.Font("Arial Black", 0, 18)); // NOI18N
+        jLabel3.setText("REGISTRO");
+
         botonOro.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         botonOro.setText("ORO");
-
-        botonAceptar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        botonAceptar.setText("ACEPTAR");
-
-        botonRegresar1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        botonRegresar1.setText("REGRESAR");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -203,6 +199,5 @@ public class RegistroVista extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPopupMenu jPopupMenu1;
     // End of variables declaration//GEN-END:variables
 }

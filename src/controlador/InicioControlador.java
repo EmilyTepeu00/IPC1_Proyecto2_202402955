@@ -18,7 +18,7 @@ public class InicioControlador {
         this.vista = vista;
         this.modelo = modelo;
         this.registroModelo = registroModelo;
-        
+    
         vista.getBotonIniciar().addActionListener(this::iniciarSesion);
         vista.getBotonRegistro().addActionListener(e -> abrirRegistro());
     }
@@ -69,7 +69,7 @@ public class InicioControlador {
     
     private void abrirRegistro() {
         RegistroVista registroVista = new RegistroVista();
-        new RegistroControlador(registroVista, registroModelo, vista);
+        new RegistroControlador(registroVista, registroModelo, vista); // <--- usa la instancia correcta
         vista.dispose();
         registroVista.setVisible(true);
     }
