@@ -15,10 +15,10 @@ public class ModificarRControlador {
     public ModificarRControlador(ModificarRVista vista) {
         this.vista = vista;
         
-        // Pedir ID al iniciar
+        //PEDIR ID
         pedirIdRepuesto();
         
-        // Agregar listeners
+        //LISTENERS
         vista.getBotonAceptar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

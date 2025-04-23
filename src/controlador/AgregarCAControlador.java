@@ -5,12 +5,16 @@ import modelo.ClientesAutosModelo;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import vista.ClientesAutosVista;
+import modelo.ServiciosModelo;
 
 public class AgregarCAControlador {
     private AgregarCAVista vista;
     
     public AgregarCAControlador(AgregarCAVista vista) {
         this.vista = vista;
+        
+        //ID INICIAL
+        actualizarID();
         
         //ID AUTOMATICO
         vista.getCampoID().setText(String.valueOf(ClientesAutosModelo.getSiguienteId()));
@@ -19,6 +23,12 @@ public class AgregarCAControlador {
         //LISTENERS
         vista.getBotonAceptar().addActionListener(this::agregarClienteAuto);
         vista.getBotonRegresar().addActionListener(e -> regresar());
+    }
+    
+    //ACTUALIZAR ID
+    private void actualizarID() {
+        vista.getCampoID().setText(String.valueOf(ServiciosModelo.getSiguienteId()));
+        vista.getCampoID().setEditable(false);
     }
     
     private void agregarClienteAuto(ActionEvent e) {
@@ -38,7 +48,8 @@ public class AgregarCAControlador {
             
             if (id != -1) {
                 JOptionPane.showMessageDialog(vista, "CLIENTE AGREGADO CON ID: " + id);
-                regresar();
+                limpiarCampos();
+                actualizarID();
             } else {
                 JOptionPane.showMessageDialog(vista, "NO SE PUDO AGREGAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
@@ -67,4 +78,11 @@ public class AgregarCAControlador {
         vista.dispose();
     }
     
+    private void limpiarCampos() {
+        vista.getCampoNombre().setText("");
+        vista.getCampoUsuario().setText("");
+        vista.getCampoContraseña().setText("");
+        vista.getCampoAutomovil().setText("");
+        vista.getCampoTipoCliente().setText("");
+    }
 }

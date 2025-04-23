@@ -12,6 +12,9 @@ public class AgregarRControlador {
     public AgregarRControlador(AgregarRVista vista) {
         this.vista = vista;
         
+        //ID INICIAL
+        actualizarID();
+        
         //IDENTIFICADOR UNICO
         vista.getCampoID().setText(String.valueOf(RepuestosModelo.getSiguienteId()));
         vista.getCampoID().setEditable(false);
@@ -32,6 +35,12 @@ public class AgregarRControlador {
         });
     }
     
+    //ACTUALIZAR ID
+    private void actualizarID() {
+        vista.getCampoID().setText(String.valueOf(RepuestosModelo.getSiguienteId()));
+        vista.getCampoID().setEditable(false);
+    }
+    
     private void agregarRepuesto() {
         try {
             String nombre = vista.getCampoNombre().getText();
@@ -44,7 +53,8 @@ public class AgregarRControlador {
             
             if (id != -1) {
                 javax.swing.JOptionPane.showMessageDialog(vista, "REPUESTO AGREGADO CON ID: " + id);
-                regresar();
+                limpiarCampos();
+                actualizarID();
             } else {
                 javax.swing.JOptionPane.showMessageDialog(vista, "NO SE PUDO AGREGAR EL REPUESTO", "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
@@ -58,5 +68,13 @@ public class AgregarRControlador {
         new RepuestosControlador(repuestosVista);
         repuestosVista.setVisible(true);
         vista.dispose();
+    }
+    
+    private void limpiarCampos() {
+        vista.getCampoNombre().setText("");
+        vista.getCampoMarca().setText("");
+        vista.getCampoModelo().setText("");
+        vista.getCampoExistencias().setText("");
+        vista.getCampoPrecio().setText("");
     }
 }

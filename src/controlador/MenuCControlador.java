@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import modelo.InicioModelo;
 import modelo.RegistroModelo;
 import vista.RegistrarAutosVista;
+import vista.VerAutosVista;
 
 public class MenuCControlador {
     private MenuCVista vista;
@@ -27,7 +28,7 @@ public class MenuCControlador {
     private void configurarListeners() {
         vista.getBotonCerrar().addActionListener(this::cerrarSesion);
         vista.getBotonRegistrar().addActionListener(e -> abrirRegistroAutos());
-        vista.getBotonAutos().addActionListener(e -> mostrarMensaje("Ver Autos"));
+        vista.getBotonAutos().addActionListener(e -> abrirVerAutos());
         vista.getBotonFacturas().addActionListener(e -> mostrarMensaje("Facturas"));
         vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
     }
@@ -37,6 +38,13 @@ public class MenuCControlador {
         new RegistrarAutosControlador(registrarAutos, vista, usuarioActual);
         vista.setVisible(false);
         registrarAutos.setVisible(true);
+    }
+    
+    private void abrirVerAutos() {
+        VerAutosVista verAutos = new VerAutosVista();
+        new VerAutosControlador(verAutos, vista, usuarioActual);
+        vista.setVisible(false);
+        verAutos.setVisible(true);
     }
     
     private void cerrarSesion(ActionEvent e) {

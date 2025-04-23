@@ -55,8 +55,7 @@ public class ClientesAutosModelo {
         return null;
     }
 
-    public static boolean modificarCliente(int id, String nombreCompleto, String usuario, 
-                                         String contraseña, String tipoCliente, String[] automoviles) {
+    public static boolean modificarCliente(int id, String nombreCompleto, String usuario, String contraseña, String tipoCliente, String[] automoviles) {
         Cliente cliente = buscarCliente(id);
         if (cliente == null) return false;
         

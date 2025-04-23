@@ -29,7 +29,7 @@ public class RegistrarAutosModelo {
     }
     
     public boolean guardarAuto(String usuario, String placa, String marca, String modelo, ImageIcon imagen) {
-        // Guardar datos del auto
+        //GUARDAR DATOS DEL AUTO
         String nombreArchivo = CARPETA_DATOS + File.separator + usuario + "_" + placa + ".txt";
         
         try (FileWriter writer = new FileWriter(nombreArchivo)) {
@@ -38,7 +38,7 @@ public class RegistrarAutosModelo {
             writer.write("Marca: " + marca + "\n");
             writer.write("Modelo: " + modelo + "\n");
             
-            //`PARA GUARDAR LA IMAGEN 
+            //PARA GUARDAR LA IMAGEN 
             if (imagen != null) {
                 String nombreImagen = CARPETA_IMAGENES + File.separator + usuario + "_" + placa + ".jpg";
                 File archivoImagen = new File(nombreImagen);

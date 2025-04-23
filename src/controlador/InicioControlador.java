@@ -69,7 +69,7 @@ public class InicioControlador {
     
     private void abrirRegistro() {
         RegistroVista registroVista = new RegistroVista();
-        new RegistroControlador(registroVista, registroModelo, vista); // <--- usa la instancia correcta
+        new RegistroControlador(registroVista, registroModelo, vista); 
         vista.dispose();
         registroVista.setVisible(true);
     }
