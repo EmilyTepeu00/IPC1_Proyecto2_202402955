@@ -24,8 +24,7 @@ public class MenuAControlador {
     
     private void configurarBienvenida() {
         String tipo = usuarioActual.equals(InicioModelo.ADMIN_USER) ? "ADMINISTRADOR" : "MECANICO";
-        JOptionPane.showMessageDialog(vista, "BIENVENIDO " + tipo, "BIENVENIDO", 
-            JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(vista, "BIENVENIDO " + tipo, "BIENVENIDO", JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void configurarListeners() {

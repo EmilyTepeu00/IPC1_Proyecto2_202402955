@@ -54,7 +54,7 @@ public class MenuCControlador {
         if (opcion == JOptionPane.YES_OPTION) {
             InicioVista inicio = new InicioVista();
             RegistroModelo registro = RegistroModelo.getInstance();
-            InicioModelo modelo = new InicioModelo(registro);
+            InicioModelo modelo = new InicioModelo(registro); 
             new InicioControlador(inicio, modelo, registro);
             vista.dispose();
             inicio.setVisible(true);

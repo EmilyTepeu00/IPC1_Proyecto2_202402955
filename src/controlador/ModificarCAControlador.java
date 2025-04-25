@@ -2,87 +2,67 @@ package controlador;
 
 import vista.ModificarCAVista;
 import modelo.ClientesAutosModelo;
-import modelo.ClientesAutosModelo.Cliente;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-import vista.MenuAVista;
+import vista.ClientesAutosVista;
 
 public class ModificarCAControlador {
     private ModificarCAVista vista;
-    private Cliente clienteActual;
-    private int idCliente;
-    
-    public ModificarCAControlador(ModificarCAVista vista, int idCliente) {
+    private String dpiCliente;
+
+    public ModificarCAControlador(ModificarCAVista vista, String dpi) {
         this.vista = vista;
-        this.idCliente = idCliente;
-        this.clienteActual = ClientesAutosModelo.buscarCliente(idCliente);
+        this.dpiCliente = dpi;
         
-        if (clienteActual != null) {
-            //LLENAR CAMPOS CON DATOS ACTUALIZADOS
-            vista.getCampoNombre().setText(clienteActual.getNombreCompleto());
-            vista.getCampoUsuario().setText(clienteActual.getUsuario());
-            vista.getCampoContraseña().setText(clienteActual.getContraseña());
-            vista.getCampoTipoCliente().setText(clienteActual.getTipoCliente());
-            
-            //CONVERTIR ARRAY DE AUTOS A STRING
-            StringBuilder automovilesStr = new StringBuilder();
-            for (String auto : clienteActual.getAutomoviles()) {
-                automovilesStr.append(auto).append(";");
-            }
-            vista.getCampoAutomovil().setText(automovilesStr.toString());
-        }
-        
-        //LISTENERS
-        vista.getBotonAceptar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modificarClienteAuto();
-            }
-        });
-        
-        vista.getBotonRegresar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                regresar();
-            }
-        });
+        cargarDatosCliente();
+        configurarListeners();
     }
-    
-    private void modificarClienteAuto() {
-        try {
-            String nombreCompleto = vista.getCampoNombre().getText();
-            String usuario = vista.getCampoUsuario().getText();
-            String contraseña = vista.getCampoContraseña().getText();
-            String tipoCliente = vista.getCampoTipoCliente().getText();
-            String automovilesStr = vista.getCampoAutomovil().getText();
-            
-            String[] automoviles = ClientesAutosModelo.parseAutomoviles(automovilesStr);
-            
-            boolean exito = ClientesAutosModelo.modificarCliente(
-                idCliente, 
-                nombreCompleto, 
-                usuario, 
-                contraseña, 
-                tipoCliente, 
-                automoviles
-            );
-            
-            if (exito) {
-                JOptionPane.showMessageDialog(vista, "CLIENTE MODIFICADO CON EXITO");
-                regresar();
-            } else {
-                JOptionPane.showMessageDialog(vista, "ERROR AL MODIFICAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(vista, "ERROR: " + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+
+    private void cargarDatosCliente() {
+        ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorDPI(dpiCliente);
+        if (cliente != null) {
+            vista.getCampoNombre().setText(cliente.getNombreCompleto());
+            vista.getCampoUsuario().setText(cliente.getUsuario());
+            vista.getCampoContraseña().setText(cliente.getContraseña());
+            vista.getCampoTipoCliente().setText(cliente.getTipoCliente());
+            vista.getCampoAutomovil().setText(cliente.getAutomovil());
         }
     }
-    
+
+    private void configurarListeners() {
+        vista.getBotonAceptar().addActionListener(this::modificarCliente);
+        vista.getBotonRegresar().addActionListener(e -> regresar());
+    }
+
+    private void modificarCliente(ActionEvent e) {
+        String nombre = vista.getCampoNombre().getText().trim();
+        String usuario = vista.getCampoUsuario().getText().trim();
+        String contraseña = vista.getCampoContraseña().getText().trim();
+        String tipoCliente = vista.getCampoTipoCliente().getText().trim();
+        String automovil = vista.getCampoAutomovil().getText().trim();
+
+        if (nombre.isEmpty() || usuario.isEmpty() || contraseña.isEmpty() || 
+            tipoCliente.isEmpty() || automovil.isEmpty()) {
+            JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        boolean exito = ClientesAutosModelo.modificarCliente(
+            dpiCliente, nombre, usuario, contraseña, tipoCliente, automovil
+        );
+
+        if (exito) {
+            JOptionPane.showMessageDialog(vista, "CLIENTE MODIFICADO CON EXITO");
+            regresar();
+        } else {
+            JOptionPane.showMessageDialog(vista, "ERRO AL MODIFICAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void regresar() {
-        MenuAVista menuVista = new MenuAVista();
-        new MenuAControlador(menuVista, "admin");
-        menuVista.setVisible(true);
+        ClientesAutosVista clientesVista = new ClientesAutosVista();
+        new ClientesAutosControlador(clientesVista);
+        clientesVista.setVisible(true);
         vista.dispose();
     }
 }

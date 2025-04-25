@@ -3,13 +3,13 @@ package controlador;
 import vista.VerAutosVista;
 import vista.MenuCVista;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import modelo.VerAutosModelo;
+import modelo.ClientesAutosModelo;
 
 public class VerAutosControlador {
     private VerAutosVista vista;
@@ -50,10 +50,32 @@ public class VerAutosControlador {
     }
     
     private void cargarAutos() {
+        //OBTENER LSO DATOS DEL SISTEMA DE ARCHIVOS
         autos = modelo.obtenerAutosUsuario(usuarioActual);
+        
+        //SI NO HAY ARCHIVOS SE BUSCA EN LSO DATOS DEL CLIENTE
+        if (autos == null || autos.length == 0) {
+            autos = obtenerAutosDesdeCliente();
+        }
     }
     
-    //MODELO DE LA TABLA
+    //PARA OBTENER LOS DATOS DEL CLIENTE
+    private String[][] obtenerAutosDesdeCliente() {
+        ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuarioActual);
+        if (cliente != null && cliente.getAutomovil() != null && !cliente.getAutomovil().isEmpty()) {
+            String[] datosAuto = cliente.getAutomovil().split(",");
+            if (datosAuto.length >= 4) {
+                return new String[][]{
+                    {datosAuto[0].trim(),  // Placa
+                     datosAuto[1].trim(),  // Marca
+                     datosAuto[2].trim(),  // Modelo
+                     datosAuto[3].trim()}  // Imagen
+                };
+            }
+        }
+        return null;
+    }
+    
     private void configurarTabla() {
         DefaultTableModel model = new DefaultTableModel(
             new Object[][]{},
@@ -88,8 +110,10 @@ public class VerAutosControlador {
     }
     
     private void ordenarAutos(boolean ascendente) {
-        modelo.shellSort(autos, ascendente);
-        actualizarTabla();
+        if (autos != null && autos.length > 1) {
+            modelo.shellSort(autos, ascendente);
+            actualizarTabla();
+        }
     }
     
     private void actualizarTabla() {

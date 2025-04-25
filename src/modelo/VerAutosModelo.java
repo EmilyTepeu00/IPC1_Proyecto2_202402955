@@ -1,18 +1,17 @@
 package modelo;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.ImageIcon;
 import java.awt.Image;
-import java.io.IOException;
 
 public class VerAutosModelo {
-    private static final String CARPETA_DATOS = "datos_autos";
-    private static final String CARPETA_IMAGENES = "imagenes_autos";
+    private static final String CARPETA_AUTOS = "datos_autos";
     
     public String[][] obtenerAutosUsuario(String usuario) {
-        File carpeta = new File(CARPETA_DATOS);
+        File carpeta = new File(CARPETA_AUTOS);
         File[] archivos = carpeta.listFiles((dir, name) -> name.startsWith(usuario + "_"));
         
         if (archivos == null || archivos.length == 0) {
@@ -22,11 +21,9 @@ public class VerAutosModelo {
         String[][] autos = new String[archivos.length][4];
         
         for (int i = 0; i < archivos.length; i++) {
-            try {
-                String contenido = new String(Files.readAllBytes(Paths.get(archivos[i].getAbsolutePath())));
-                String[] lineas = contenido.split("\n");
-                
-                for (String linea : lineas) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(archivos[i]))) {
+                String linea;
+                while ((linea = reader.readLine()) != null) {
                     if (linea.startsWith("Placa: ")) {
                         autos[i][0] = linea.substring("Placa: ".length()).trim();
                     } else if (linea.startsWith("Marca: ")) {
@@ -64,7 +61,6 @@ public class VerAutosModelo {
         }
     }
     
-    //ORDENAMIENTO SHELLSORT
     public void shellSort(String[][] autos, boolean ascendente) {
         if (autos == null || autos.length == 0) return;
         

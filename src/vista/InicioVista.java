@@ -93,7 +93,7 @@ public class InicioVista extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    //Getters
+    //GETTERS
     public javax.swing.JButton getBotonIniciar() {
         return botonIniciar;
     }
@@ -127,7 +127,7 @@ public class InicioVista extends javax.swing.JFrame {
             public void run() {
                 RegistroModelo registroModelo = RegistroModelo.getInstance();
                 InicioVista vista = new InicioVista();
-                InicioModelo modelo = new InicioModelo(registroModelo);
+                InicioModelo modelo = new InicioModelo(registroModelo); 
                 new InicioControlador(vista, modelo, registroModelo);
                 vista.setVisible(true);
             }

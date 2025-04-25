@@ -5,8 +5,6 @@ import vista.AgregarCAVista;
 import vista.ModificarCAVista;
 import vista.VerCAVista;
 import modelo.ClientesAutosModelo;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import vista.MenuAVista;
 
@@ -15,82 +13,45 @@ public class ClientesAutosControlador {
     
     public ClientesAutosControlador(ClientesAutosVista vista) {
         this.vista = vista;
-        
-        //LISTENERS
-        vista.getBotonAgregar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirAgregarClienteAuto();
-            }
-        });
-        
-        vista.getBotonModificar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirModificarClienteAuto();
-            }
-        });
-        
-        vista.getBotonEliminar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                eliminarClienteAuto();
-            }
-        });
-        
-        vista.getBotonVer().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirVerClientesAutos();
-            }
-        });
-        
-        vista.getBotonRegresar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                regresar();
-            }
-        });
+        configurarListeners();
+    }
+
+    private void configurarListeners() {
+        vista.getBotonAgregar().addActionListener(e -> abrirAgregarClienteAuto());
+        vista.getBotonModificar().addActionListener(e -> abrirModificarClienteAuto());
+        vista.getBotonEliminar().addActionListener(e -> eliminarClienteAuto());
+        vista.getBotonVer().addActionListener(e -> abrirVerClientesAutos());
+        vista.getBotonRegresar().addActionListener(e -> regresar());
     }
     
     private void abrirAgregarClienteAuto() {
         AgregarCAVista agregarVista = new AgregarCAVista();
         new AgregarCAControlador(agregarVista);
         agregarVista.setVisible(true);
-        vista.setVisible(false);
+        vista.dispose();
     }
     
     private void abrirModificarClienteAuto() {
-        String idStr = JOptionPane.showInputDialog(vista, "INGRESE EL ID DEL CLIENTE:");
-        if (idStr != null && !idStr.isEmpty()) {
-            try {
-                int id = Integer.parseInt(idStr);
-                if (ClientesAutosModelo.buscarCliente(id) != null) {
-                    ModificarCAVista modificarVista = new ModificarCAVista();
-                    new ModificarCAControlador(modificarVista, id);
-                    modificarVista.setVisible(true);
-                    vista.setVisible(false);
-                } else {
-                    JOptionPane.showMessageDialog(vista, "EL ID INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(vista, "ID INVALIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+        String dpi = JOptionPane.showInputDialog(vista, "INGRESE EL DPI DEL CLIENTE A MODIFICAR: ");
+        if (dpi != null && !dpi.isEmpty()) {
+            if (ClientesAutosModelo.buscarClientePorDPI(dpi) != null) {
+                ModificarCAVista modificarVista = new ModificarCAVista();
+                new ModificarCAControlador(modificarVista, dpi);
+                modificarVista.setVisible(true);
+                vista.dispose();
+            } else {
+                JOptionPane.showMessageDialog(vista, "EL DPI INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     
     private void eliminarClienteAuto() {
-        String idStr = JOptionPane.showInputDialog(vista, "INGRESE EL ID DEL CLIENTE:");
-        if (idStr != null && !idStr.isEmpty()) {
-            try {
-                int id = Integer.parseInt(idStr);
-                if (ClientesAutosModelo.eliminarCliente(id)) {
-                    JOptionPane.showMessageDialog(vista, "CLIENTE ELIMINADO CORRECTAMENTE");
-                } else {
-                    JOptionPane.showMessageDialog(vista, "EL ID INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(vista, "ID INVALIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+        String dpi = JOptionPane.showInputDialog(vista, "INGRESE EL DPI DEL CLIENTE A ELIMINAR:");
+        if (dpi != null && !dpi.isEmpty()) {
+            if (ClientesAutosModelo.eliminarCliente(dpi)) {
+                JOptionPane.showMessageDialog(vista, "CLIENTE ELIMINADO CON EXITO");
+            } else {
+                JOptionPane.showMessageDialog(vista, "EL DPI INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -99,7 +60,7 @@ public class ClientesAutosControlador {
         VerCAVista verVista = new VerCAVista();
         new VerCAControlador(verVista);
         verVista.setVisible(true);
-        vista.setVisible(false);
+        vista.dispose();
     }
     
     private void regresar() {

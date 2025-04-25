@@ -17,13 +17,11 @@ public class RegistroControlador {
         this.modelo = modelo;
         this.inicioVista = inicioVista;
         
-        //CONFIGURACION RADIO BUTTONS
         vista.getButtonGroup1().add(vista.getBotonNormal());
         vista.getButtonGroup1().add(vista.getBotonOro());
         vista.getBotonNormal().setSelected(true);
         vista.getBotonOro().setEnabled(false);
         
-        //LISTENERS
         vista.getBotonAceptar().addActionListener(this::registrarCliente);
         vista.getBotonRegresar1().addActionListener(e -> regresarAInicio());
     }
@@ -41,10 +39,23 @@ public class RegistroControlador {
                 limpiarCampos();
                 regresarAInicio();
             } else {
-                JOptionPane.showMessageDialog(vista, 
-                    "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(vista, "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    
+    private boolean validarCampos(String dpi, String nombre, String usuario, String contra) {
+        if (dpi.isEmpty() || nombre.isEmpty() || usuario.isEmpty() || contra.isEmpty()) {
+            JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if (usuario.equals(InicioModelo.ADMIN_USER) || usuario.equals(InicioModelo.MECANICO_USER)) {
+            JOptionPane.showMessageDialog(vista, "NOMBRE DE USUARIO NO PERMITIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
     }
     
     private void limpiarCampos() {
@@ -53,22 +64,6 @@ public class RegistroControlador {
         vista.getCampoUsuario().setText("");
         vista.getCampoContra().setText("");
         vista.getBotonNormal().setSelected(true);
-    }
-    
-    private boolean validarCampos(String dpi, String nombre, String usuario, String contra) {
-        if (dpi.isEmpty() || nombre.isEmpty() || usuario.isEmpty() || contra.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, 
-                "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        
-        if (usuario.equals(InicioModelo.ADMIN_USER) || usuario.equals(InicioModelo.MECANICO_USER)) {
-            JOptionPane.showMessageDialog(vista, 
-                "EL USUARIO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        
-        return true;
     }
     
     private void regresarAInicio() {
