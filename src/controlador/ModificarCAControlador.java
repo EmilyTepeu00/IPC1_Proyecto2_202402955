@@ -5,10 +5,12 @@ import modelo.ClientesAutosModelo;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import vista.ClientesAutosVista;
+import java.io.File;
 
 public class ModificarCAControlador {
     private ModificarCAVista vista;
     private String dpiCliente;
+    private String usuarioCliente;
 
     public ModificarCAControlador(ModificarCAVista vista, String dpi) {
         this.vista = vista;
@@ -21,6 +23,7 @@ public class ModificarCAControlador {
     private void cargarDatosCliente() {
         ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorDPI(dpiCliente);
         if (cliente != null) {
+            this.usuarioCliente = cliente.getUsuario();
             vista.getCampoNombre().setText(cliente.getNombreCompleto());
             vista.getCampoUsuario().setText(cliente.getUsuario());
             vista.getCampoContraseña().setText(cliente.getContraseña());
@@ -47,6 +50,19 @@ public class ModificarCAControlador {
             return;
         }
 
+        //ACTUALIZAR ARCHIVOS DE AUTOS AL CAMBIAR DE USUARIO
+        if (!usuario.equals(usuarioCliente)) {
+            File carpetaAutos = new File("datos_autos");
+            File[] archivosAutos = carpetaAutos.listFiles((dir, name) -> name.startsWith(usuarioCliente + "_"));
+            
+            if (archivosAutos != null) {
+                for (File archivoAuto : archivosAutos) {
+                    String nuevoNombre = archivoAuto.getName().replace(usuarioCliente + "_", usuario + "_");
+                    archivoAuto.renameTo(new File(carpetaAutos, nuevoNombre));
+                }
+            }
+        }
+
         boolean exito = ClientesAutosModelo.modificarCliente(
             dpiCliente, nombre, usuario, contraseña, tipoCliente, automovil
         );
@@ -55,7 +71,7 @@ public class ModificarCAControlador {
             JOptionPane.showMessageDialog(vista, "CLIENTE MODIFICADO CON EXITO");
             regresar();
         } else {
-            JOptionPane.showMessageDialog(vista, "ERRO AL MODIFICAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "ERROR AL MODIFICAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

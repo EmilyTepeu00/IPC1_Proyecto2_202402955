@@ -16,6 +16,7 @@ public class ServiciosVista extends javax.swing.JFrame {
         botonEliminar = new javax.swing.JButton();
         botonVer = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
+        botonDiagnostico = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -37,6 +38,9 @@ public class ServiciosVista extends javax.swing.JFrame {
         botonRegresar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         botonRegresar.setText("REGRESAR");
 
+        botonDiagnostico.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        botonDiagnostico.setText("DIAGNOSTICO");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -45,6 +49,8 @@ public class ServiciosVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(botonDiagnostico)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonRegresar))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(132, 132, 132)
@@ -79,7 +85,9 @@ public class ServiciosVista extends javax.swing.JFrame {
                         .addGap(32, 32, 32)
                         .addComponent(botonVer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addComponent(botonRegresar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonRegresar)
+                    .addComponent(botonDiagnostico))
                 .addContainerGap())
         );
 
@@ -134,6 +142,7 @@ public class ServiciosVista extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAgregar;
+    private javax.swing.JButton botonDiagnostico;
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
     private javax.swing.JButton botonRegresar;

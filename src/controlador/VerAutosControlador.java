@@ -50,7 +50,7 @@ public class VerAutosControlador {
     }
     
     private void cargarAutos() {
-        //OBTENER LSO DATOS DEL SISTEMA DE ARCHIVOS
+        //OBTENER LOS DATOS DEL SISTEMA DE ARCHIVOS
         autos = modelo.obtenerAutosUsuario(usuarioActual);
         
         //SI NO HAY ARCHIVOS SE BUSCA EN LSO DATOS DEL CLIENTE

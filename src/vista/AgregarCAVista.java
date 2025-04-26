@@ -29,40 +29,52 @@ public class AgregarCAVista extends javax.swing.JFrame {
                     List<File> files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     File file = files.get(0);
 
-                    if (!file.getName().endsWith(".tmca")) {
+                    if (!file.getName().toLowerCase().endsWith(".tmca")) {
                         JOptionPane.showMessageDialog(AgregarCAVista.this, 
                             "EL ARCHIVO DEBE TENER EXTENSION .tmca", "ERROR", JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
 
-                    Scanner scanner = new Scanner(file);
-                    if (scanner.hasNextLine()) {
-                        String linea = scanner.nextLine();
-                        String[] partes = linea.split("-");
-
-                        if (partes.length != 6) {
-                            JOptionPane.showMessageDialog(AgregarCAVista.this, 
-                                "FORMATO DE ARCHIVO INCORRECTO", "ERROR", JOptionPane.ERROR_MESSAGE);
-                            return false;
+                    StringBuilder contenido = new StringBuilder();
+                    try (Scanner scanner = new Scanner(file)) {
+                        while (scanner.hasNextLine()) {
+                            contenido.append(scanner.nextLine()).append("\n");
                         }
-
-                        campoID.setText(partes[0]);
-                        campoNombre.setText(partes[1]);
-                        campoUsuario.setText(partes[2]);
-                        campoContraseña.setText(partes[3]);
-                        campoTipoCliente.setText(partes[4]);
-                        campoAutomovil.setText(partes[5]);
-
-                        return true;
                     }
 
-                    scanner.close();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(AgregarCAVista.this, 
-                        "ERROR AL PROCESAR EL ARCHIVO: " + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
+                    //PROCESAR FORMATO: ID-NOMBRE-USUARIO-CONTRASEÑA-TIPO_CLIENTE-AUTOMOVILES
+                    String[] lineas = contenido.toString().split("\n");
+                    if (lineas.length < 1) {
+                        throw new Exception("Archivo vacío");
+                    }
 
-                return false;
+                    String[] partes = lineas[0].split("-");
+                    if (partes.length != 6) {
+                        throw new Exception("FORMATO INCORRECTO");
+                    }
+
+                    //VALIDAR FORMATO DE AUTOS (placa,marca,modelo,imagen;placa,marca,modelo,imagen...)
+                    String[] autos = partes[5].split(";");
+                    for (String auto : autos) {
+                        String[] datosAuto = auto.trim().split(",");
+                        if (datosAuto.length != 4) {
+                            throw new Exception("FORMATO DE AUTOS INCORRECTO");
+                        }
+                    }
+
+                    //ASIGNAR VALORES A LOS CAMPOS
+                    campoID.setText(partes[0]);
+                    campoNombre.setText(partes[1]);
+                    campoUsuario.setText(partes[2]);
+                    campoContraseña.setText(partes[3]);
+                    campoTipoCliente.setText(partes[4]);
+                    campoAutomovil.setText(partes[5]);
+
+                    return true;
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(AgregarCAVista.this, "ERROR AL PROCESAR EL ARCHIVO: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
             }
         });
     }

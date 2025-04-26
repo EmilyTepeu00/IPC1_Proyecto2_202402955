@@ -18,7 +18,6 @@ public class AgregarSControlador {
     }
     
     private void configurarVista() {
-        vista.getCampoID().setText(String.valueOf(ServiciosModelo.getSiguienteId()));
         cargarRepuestos();
     }
     
@@ -38,46 +37,69 @@ public class AgregarSControlador {
     
     private void agregarServicio(ActionEvent e) {
         try {
-            //VALIDAR CAMPOS VACIOS
+            // VALIDAR CAMPOS VACIOS
             if (!validarCampos()) return;
+            
+            // VALIDAR ID
+            int idServicio;
+            try {
+                idServicio = Integer.parseInt(vista.getCampoID().getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(vista, "EL ID DEBE SER UN NUMERO VALIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // VERIFICAR SI EL ID YA EXISTE
+            if (ServiciosModelo.buscarServicio(idServicio) != null) {
+                JOptionPane.showMessageDialog(vista, "EL ID INGRESADO YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
             String nombre = vista.getCampoNombre().getText().trim();
             String marca = vista.getCampoMarca().getText().trim();
             String modelo = vista.getCampoModelo().getText().trim();
-            double precioManoObra = Double.parseDouble(vista.getCampoPMano().getText());
+            double precioManoObra;
             
-            //OBTENER REPUESTO SELECCIONADO
+            try {
+                precioManoObra = Double.parseDouble(vista.getCampoPMano().getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(vista, "INGRESE UN PRECIO VALIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // OBTENER REPUESTO SELECCIONADO
             Repuesto repuesto = obtenerRepuestoSeleccionado();
             if (repuesto == null) return;
             
-            //VALIDAR COINCIDENCIA DE MARCA Y MODELO
+            // VALIDAR COINCIDENCIA DE MARCA Y MODELO
             if (!validarMarcaModelo(marca, modelo, repuesto)) return;
             
-            //CREAR SERVICIO
-            int idServicio = ServiciosModelo.agregarServicio(nombre, marca, modelo, precioManoObra);
-            if (idServicio == -1) {
+            // CREAR SERVICIO 
+            boolean creado = ServiciosModelo.agregarServicioConId(idServicio, nombre, marca, modelo, precioManoObra);
+            if (!creado) {
                 JOptionPane.showMessageDialog(vista, "NO SE PUDO CREAR EL SERVICIO", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            //ASIGNAR REPUESTO Y CALCULAR PRECIO TOTAL
+            // ASIGNAR REPUESTO Y CALCULAR PRECIO TOTAL
             if (ServiciosModelo.agregarRepuestoAServicio(idServicio, repuesto.getId())) {
                 double precioTotal = precioManoObra + repuesto.getPrecio();
                 vista.getCampoPTotal().setText(String.valueOf(precioTotal));
                 
-                JOptionPane.showMessageDialog(vista, "SERVICIO CREADO CON ID: " + idServicio);
+                JOptionPane.showMessageDialog(vista, "SERVICIO CREADO CON ID: " + idServicio, "EXITO", JOptionPane.INFORMATION_MESSAGE);
                 regresar();
             } else {
-                ServiciosModelo.eliminarServicio(idServicio); //LIMPIAR SERVICIO MAL CREADO
+                ServiciosModelo.eliminarServicio(idServicio); // LIMPIAR SERVICIO MAL CREADO
                 JOptionPane.showMessageDialog(vista, "ERROR AL ASIGNAR EL REPUESTO", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vista, "INGRESE DATOS VALIDOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "INGRESE DATOS VALIDOS EN TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     private boolean validarCampos() {
-        if (vista.getCampoNombre().getText().trim().isEmpty() ||
+        if (vista.getCampoID().getText().trim().isEmpty() ||
+            vista.getCampoNombre().getText().trim().isEmpty() ||
             vista.getCampoMarca().getText().trim().isEmpty() ||
             vista.getCampoModelo().getText().trim().isEmpty() ||
             vista.getCampoPMano().getText().trim().isEmpty()) {
@@ -95,13 +117,18 @@ public class AgregarSControlador {
             return null;
         }
         
-        int idRepuesto = Integer.parseInt(seleccion.split(" - ")[0]);
-        return RepuestosModelo.buscarRepuesto(idRepuesto);
+        try {
+            int idRepuesto = Integer.parseInt(seleccion.split(" - ")[0]);
+            return RepuestosModelo.buscarRepuesto(idRepuesto);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(vista, "ERROR AL OBTENER EL REPUESTO SELECCIONADO", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
     }
     
     private boolean validarMarcaModelo(String marca, String modelo, Repuesto repuesto) {
-        if (!marca.equals(repuesto.getMarca()) || !modelo.equals(repuesto.getModelo())) {
-            JOptionPane.showMessageDialog(vista, "MARCA Y MODELO NO COINCIDEN CON EL REPUESTO", "ERROR", JOptionPane.ERROR_MESSAGE);
+        if (!marca.equalsIgnoreCase(repuesto.getMarca()) || !modelo.equalsIgnoreCase(repuesto.getModelo())) {
+            JOptionPane.showMessageDialog(vista, "MARCA Y MODELO NO COINCIDEN CON EL REPUESTO SELECCIONADO\n" + "REPUESTO: " + repuesto.getMarca() + " " + repuesto.getModelo(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;

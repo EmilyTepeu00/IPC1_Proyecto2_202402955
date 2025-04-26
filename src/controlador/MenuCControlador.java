@@ -8,6 +8,7 @@ import modelo.InicioModelo;
 import modelo.RegistroModelo;
 import vista.RegistrarAutosVista;
 import vista.VerAutosVista;
+import vista.ProgresoVista;
 
 public class MenuCControlador {
     private MenuCVista vista;
@@ -30,7 +31,7 @@ public class MenuCControlador {
         vista.getBotonRegistrar().addActionListener(e -> abrirRegistroAutos());
         vista.getBotonAutos().addActionListener(e -> abrirVerAutos());
         vista.getBotonFacturas().addActionListener(e -> mostrarMensaje("Facturas"));
-        vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
+        vista.getBotonProgreso().addActionListener(this::abrirProgreso);
     }
     
     private void abrirRegistroAutos() {
@@ -45,6 +46,13 @@ public class MenuCControlador {
         new VerAutosControlador(verAutos, vista, usuarioActual);
         vista.setVisible(false);
         verAutos.setVisible(true);
+    }
+    
+    private void abrirProgreso(ActionEvent e) {
+        ProgresoVista progresoVista = new ProgresoVista();
+        new ProgresoControlador(progresoVista, usuarioActual);
+        vista.setVisible(false);
+        progresoVista.setVisible(true);
     }
     
     private void cerrarSesion(ActionEvent e) {

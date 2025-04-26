@@ -8,6 +8,7 @@ import java.io.IOException;
 public class AgregarCAModelo {
     private static final String CARPETA_CLIENTES = "datos_clientes";
     private static final String CARPETA_AUTOS = "datos_autos";
+    private static final int MAX_AUTOS = 100;
     
     public AgregarCAModelo() {
         // Crear carpetas si no existen
@@ -15,16 +16,16 @@ public class AgregarCAModelo {
         new File(CARPETA_AUTOS).mkdirs();
     }
     
-    public boolean agregarClienteAuto(String dpi, String nombre, String usuario, String contraseña, 
-                                    String tipoCliente, String[] datosAuto) {
+    public boolean agregarClienteAutos(String dpi, String nombre, String usuario, 
+                                     String contraseña, String tipoCliente, String automovilesStr) {
         try {
-            // Verificar si el DPI ya existe
+            //VERIFICAR SI EL AUTO EXISTE
             File archivoExistente = new File(CARPETA_CLIENTES, usuario + ".txt");
             if (archivoExistente.exists()) {
                 return false;
             }
             
-            // Guardar información del cliente
+            //GUARDAR INFORMACION DEL CLIENTE
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoExistente))) {
                 writer.write("DPI: " + dpi + "\n");
                 writer.write("Nombre: " + nombre + "\n");
@@ -33,20 +34,29 @@ public class AgregarCAModelo {
                 writer.write("TipoCliente: " + tipoCliente + "\n");
             }
             
-            // Guardar información del auto
-            if (datosAuto != null && datosAuto.length >= 4) {
-                File archivoAuto = new File(CARPETA_AUTOS, usuario + "_" + datosAuto[0] + ".txt");
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoAuto))) {
-                    writer.write("Placa: " + datosAuto[0] + "\n");
-                    writer.write("Marca: " + datosAuto[1] + "\n");
-                    writer.write("Modelo: " + datosAuto[2] + "\n");
-                    writer.write("Imagen: " + datosAuto[3] + "\n");
+            //PROCESAR MULTIPLES AUTOS
+            String[] autos = automovilesStr.split(";");
+            int autosRegistrados = 0;
+            
+            for (String autoStr : autos) {
+                if (autosRegistrados >= MAX_AUTOS) break;
+                
+                String[] datosAuto = autoStr.trim().split(",");
+                if (datosAuto.length == 4) { // placa,marca,modelo,imagen
+                    File archivoAuto = new File(CARPETA_AUTOS, usuario + "_" + datosAuto[0] + ".txt");
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoAuto))) {
+                        writer.write("Placa: " + datosAuto[0] + "\n");
+                        writer.write("Marca: " + datosAuto[1] + "\n");
+                        writer.write("Modelo: " + datosAuto[2] + "\n");
+                        writer.write("Imagen: " + datosAuto[3] + "\n");
+                        autosRegistrados++;
+                    }
                 }
             }
             
             return true;
         } catch (IOException e) {
-            System.err.println("Error al guardar cliente y auto: " + e.getMessage());
+            System.err.println("ERROR AL GUARDAR EL CLIENTE Y AUTO: " + e.getMessage());
             return false;
         }
     }

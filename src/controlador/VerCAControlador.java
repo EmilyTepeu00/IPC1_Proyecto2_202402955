@@ -1,7 +1,7 @@
 package controlador;
 
 import vista.VerCAVista;
-import modelo.ClientesAutosModelo;
+import modelo.VerCAModelo;
 import javax.swing.table.DefaultTableModel;
 import vista.ClientesAutosVista;
 
@@ -22,18 +22,13 @@ public class VerCAControlador {
         DefaultTableModel modelo = (DefaultTableModel) vista.getTabla().getModel();
         modelo.setRowCount(0); //LIMPIAR TABLA
         
-        ClientesAutosModelo.Cliente[] clientes = ClientesAutosModelo.obtenerTodosClientes();
-        for (ClientesAutosModelo.Cliente cliente : clientes) {
-            Object[] fila = {
-                cliente.getDpi(),
-                cliente.getNombreCompleto(),
-                cliente.getUsuario(),
-                cliente.getContraseña(),
-                cliente.getTipoCliente(),
-                cliente.getAutomovil()
-            };
+        String[][] datos = VerCAModelo.obtenerDatosClientesYAutos();
+        for (String[] fila : datos) {
             modelo.addRow(fila);
         }
+        
+        //AJUSTE DE ALTURA DE FILAS
+        vista.getTabla().setRowHeight(60); //AUMENTO DE ALTURA PARA MOSTRAR VARIOS CARROS
     }
     
     private void regresar() {

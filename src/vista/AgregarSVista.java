@@ -29,7 +29,7 @@ public class AgregarSVista extends javax.swing.JFrame {
                     java.io.File file = (java.io.File) files.get(0);
                     
                     if (!file.getName().toLowerCase().endsWith(".tms")) {
-                        javax.swing.JOptionPane.showMessageDialog(AgregarSVista.this, "EL ARCHIVO DEBET TENER LA EXTENSION .tms", "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        javax.swing.JOptionPane.showMessageDialog(AgregarSVista.this, "EL ARCHIVO DEBE TENER EXTENSION .tms", "ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
 
@@ -43,30 +43,13 @@ public class AgregarSVista extends javax.swing.JFrame {
                             return false;
                         }
 
-                        //LLENAR LOS CAMPOS CON LOS DATOS DEL ARCHIVO
-                        campoNombre.setText(partes[0]);
-                        campoMarca.setText(partes[1]);
-                        campoModelo.setText(partes[2]);
+                        // LLENAR LOS CAMPOS CON LOS DATOS DEL ARCHIVO
+                        campoID.setText(partes[0].trim());
+                        campoNombre.setText(partes[1].trim());
+                        campoMarca.setText(partes[2].trim());
+                        campoModelo.setText(partes[3].trim());
+                        campoPMano.setText(partes[4].trim());
                         
-                        //PROCESAR LISTA DE REPUESTOS
-                        if (!partes[3].isEmpty()) {
-                            String[] idsRepuestos = partes[3].split("\\.");
-                            if (idsRepuestos.length > 0) {
-                                try {
-                                    int idRepuesto = Integer.parseInt(idsRepuestos[0]);
-                                    for (int i = 0; i < listaRepuestos.getItemCount(); i++) {
-                                        String item = listaRepuestos.getItemAt(i);
-                                        if (item.startsWith(idRepuesto + " - ")) {
-                                            listaRepuestos.setSelectedIndex(i);
-                                            break;
-                                        }
-                                    }
-                                } catch (NumberFormatException e) {
-                                }
-                            }
-                        }
-                        
-                        campoPMano.setText(partes[4]);
                         return true;
                     }
                     scanner.close();

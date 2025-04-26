@@ -47,7 +47,7 @@ public class ServiciosModelo {
             this.precioTotal = sumaRepuestos + precioManoObra;
         }
 
-        //GETTERS
+        // GETTERS
         public int getId() { return id; }
         public String getNombre() { return nombre; }
         public String getMarca() { return marca; }
@@ -57,7 +57,11 @@ public class ServiciosModelo {
         public double getPrecioManoObra() { return precioManoObra; }
         public double getPrecioTotal() { return precioTotal; }
         
-        //SETTERS CON VALIDACION
+        // SETTERS
+        public void setId(int id) { 
+            this.id = id; 
+        }
+        
         public void setNombre(String nombre) { 
             if (nombre != null && !nombre.trim().isEmpty()) {
                 this.nombre = nombre.trim(); 
@@ -84,18 +88,24 @@ public class ServiciosModelo {
         }
     }
 
-    public static int agregarServicio(String nombre, String marca, String modelo, 
+    public static boolean agregarServicioConId(int id, String nombre, String marca, String modelo, 
                                      double precioManoObra) {
         if (contadorServicios >= MAX_SERVICIOS || 
             nombre == null || nombre.trim().isEmpty() ||
             marca == null || marca.trim().isEmpty() ||
-            modelo == null || modelo.trim().isEmpty()) {
-            return -1;
+            modelo == null || modelo.trim().isEmpty() ||
+            buscarServicio(id) != null) {  //VERIFICAR QUE EL ID NO EXISTA
+            return false;
         }
         
-        int id = siguienteId++;
         servicios[contadorServicios++] = new Servicio(id, nombre.trim(), marca.trim(), modelo.trim(), precioManoObra);
-        return id;
+        
+        //ACTUALIZAR ID
+        if (id >= siguienteId) {
+            siguienteId = id + 1;
+        }
+        
+        return true;
     }
 
     public static Servicio buscarServicio(int id) {
@@ -107,21 +117,33 @@ public class ServiciosModelo {
         return null;
     }
 
-    public static boolean modificarServicio(int id, String nombre, String marca, String modelo, double precioManoObra) {
-        Servicio servicio = buscarServicio(id);
+    public static boolean modificarServicio(int idActual, int nuevoId, String nombre, String marca, String modelo, double precioManoObra) {
+        Servicio servicio = buscarServicio(idActual);
         if (servicio == null) return false;
         
+        //VERIFICAR QUE EL NUEVO ID NO EXISTA
+        if (idActual != nuevoId && buscarServicio(nuevoId) != null) {
+            return false;
+        }
+        
+        servicio.setId(nuevoId);
         servicio.setNombre(nombre);
         servicio.setMarca(marca);
         servicio.setModelo(modelo);
         servicio.setPrecioManoObra(precioManoObra);
+        
+        //ACTUALIZAR SIGUIENTE ID
+        if (nuevoId >= siguienteId) {
+            siguienteId = nuevoId + 1;
+        }
+        
         return true;
     }
 
     public static boolean eliminarServicio(int id) {
         for (int i = 0; i < contadorServicios; i++) {
             if (servicios[i] != null && servicios[i].getId() == id) {
-                //MOVER LOS SERVICIOS HACIA ATRAS
+                //MOVER LOS SEVICIOS HACIA ATRAS
                 for (int j = i; j < contadorServicios - 1; j++) {
                     servicios[j] = servicios[j + 1];
                 }
@@ -144,9 +166,9 @@ public class ServiciosModelo {
         
         if (servicio == null || repuesto == null) return false;
         
-        //VERIFICAR QUE LA MARCA Y MODELO CONICIDAN
-        if (!servicio.getMarca().equals(repuesto.getMarca()) || 
-            !servicio.getModelo().equals(repuesto.getModelo())) {
+        //VERIFICAR QUE LA MARCA Y EL MODELO COINCIDAN CON EL REPUESTO
+        if (!servicio.getMarca().equalsIgnoreCase(repuesto.getMarca()) || 
+            !servicio.getModelo().equalsIgnoreCase(repuesto.getModelo())) {
             return false;
         }
         
