@@ -1,24 +1,44 @@
 package modelo;
 
-import modelo.ClientesAutosModelo.Cliente;
-import modelo.ServiciosModelo.Servicio;
-import java.io.*;
+import java.io.Serializable;
 
-public class ProgresoModelo {
+public class ProgresoModelo implements Serializable {
     private String[][] vehiculosEnProceso;
     private int contadorVehiculos;
-    private VerAutosModelo verAutosModelo;
-    private ColaEsperaModelo colaEspera;
     private int serviciosCompletados;
+    private static final String ARCHIVO_DATOS = "progreso.dat";
+    private static final SerializadorModelo serializador = new SerializadorModelo();
+    private static ProgresoModelo instancia;
+    private static final long serialVersionUID = 1L;
     
-    public ProgresoModelo() {
+    //INSTANCIA DE MODELOS
+    private VerAutosModelo verAutosModelo = new VerAutosModelo();
+    private ColaEsperaModelo colaEsperaModelo = new ColaEsperaModelo(100);
+
+    private ProgresoModelo() {
         this.vehiculosEnProceso = new String[100][5];
         this.contadorVehiculos = 0;
-        this.verAutosModelo = new VerAutosModelo();
-        this.colaEspera = new ColaEsperaModelo(100);
         this.serviciosCompletados = 0;
     }
-    
+
+    public static ProgresoModelo getInstance() {
+        if (instancia == null) {
+            instancia = cargarDatos();
+            if (instancia == null) {
+                instancia = new ProgresoModelo();
+            }
+        }
+        return instancia;
+    }
+
+    public static void guardarDatos() {
+        serializador.guardarDatos(ARCHIVO_DATOS, getInstance());
+    }
+
+    private static ProgresoModelo cargarDatos() {
+        return (ProgresoModelo) serializador.cargarDatos(ARCHIVO_DATOS);
+    }
+
     public String[][] obtenerVehiculosCliente(String usuario) {
         String[][] autos = verAutosModelo.obtenerAutosUsuario(usuario);
         if (autos == null || autos.length == 0) {
@@ -28,7 +48,7 @@ public class ProgresoModelo {
     }
     
     private String[][] obtenerAutosDesdeCliente(String usuario) {
-        Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuario);
+        ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuario);
         if (cliente != null && cliente.getAutomovil() != null && !cliente.getAutomovil().isEmpty()) {
             String[] datosAuto = cliente.getAutomovil().split(",");
             if (datosAuto.length >= 4) {
@@ -43,7 +63,7 @@ public class ProgresoModelo {
         return null;
     }
     
-    public Servicio[] obtenerTodosServicios() {
+    public ServiciosModelo.Servicio[] obtenerTodosServicios() {
         return ServiciosModelo.obtenerTodosServicios();
     }
     
@@ -58,14 +78,14 @@ public class ProgresoModelo {
         vehiculosEnProceso[contadorVehiculos][2] = modelo;
         vehiculosEnProceso[contadorVehiculos][3] = servicio;
         vehiculosEnProceso[contadorVehiculos][4] = tipoCliente;
-        
-        colaEspera.encolarConPrioridad(placa, marca, modelo, servicio, tipoCliente);
+        colaEsperaModelo.encolarConPrioridad(placa, marca, modelo, servicio, tipoCliente);
         contadorVehiculos++;
+        guardarDatos();
         return true;
     }
     
     private String obtenerTipoCliente(String usuario) {
-        Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuario);
+        ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuario);
         return cliente != null ? cliente.getTipoCliente() : "NORMAL";
     }
     
@@ -75,37 +95,20 @@ public class ProgresoModelo {
             actualizarClienteAOro(usuario);
             serviciosCompletados = 0;
         }
+        guardarDatos();
     }
     
     private void actualizarClienteAOro(String usuario) {
-        String carpetaClientes = "datos_clientes";
-        File archivoCliente = new File(carpetaClientes, usuario + ".txt");
-        File archivoTemp = new File(carpetaClientes, usuario + "_temp.txt");
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(archivoCliente));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(archivoTemp))) {
-            
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                if (linea.startsWith("TipoCliente: ")) {
-                    writer.write("TipoCliente: ORO\n");
-                } else {
-                    writer.write(linea + "\n");
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("ERROR AL ACTUALIZAR EL CLIENTE A ORO: " + e.getMessage());
-            return;
-        }
-        
-        if (archivoCliente.delete()) {
-            archivoTemp.renameTo(archivoCliente);
+        ClientesAutosModelo.Cliente cliente = ClientesAutosModelo.buscarClientePorUsuario(usuario);
+        if (cliente != null) {
+            cliente.setTipoCliente("ORO");
+            ClientesAutosModelo.guardarDatos();
         }
     }
     
     public boolean verificarCompatibilidad(String marcaVehiculo, String modeloVehiculo, String nombreServicio) {
-        Servicio[] servicios = ServiciosModelo.obtenerTodosServicios();
-        for (Servicio servicio : servicios) {
+        ServiciosModelo.Servicio[] servicios = ServiciosModelo.obtenerTodosServicios();
+        for (ServiciosModelo.Servicio servicio : servicios) {
             if (servicio != null && servicio.getNombre().equalsIgnoreCase(nombreServicio)) {
                 return servicio.getMarca().equalsIgnoreCase(marcaVehiculo) && 
                        servicio.getModelo().equalsIgnoreCase(modeloVehiculo);

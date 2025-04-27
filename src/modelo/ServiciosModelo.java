@@ -1,14 +1,17 @@
 package modelo;
 
 import modelo.RepuestosModelo.Repuesto;
+import java.io.Serializable;
 
 public class ServiciosModelo {
     private static final int MAX_SERVICIOS = 100;
     private static Servicio[] servicios = new Servicio[MAX_SERVICIOS];
     private static int contadorServicios = 0;
     private static int siguienteId = 1001;
+    private static final String ARCHIVO_DATOS = "servicios.dat";
+    private static final SerializadorModelo serializador = new SerializadorModelo();
 
-    public static class Servicio {
+    public static class Servicio implements Serializable {
         private int id;
         private String nombre;
         private String marca;
@@ -17,15 +20,15 @@ public class ServiciosModelo {
         private double precioManoObra;
         private double precioTotal;
         private int contadorRepuestos;
+        private static final long serialVersionUID = 1L;
 
-        public Servicio(int id, String nombre, String marca, String modelo, 
-                       double precioManoObra) {
+        public Servicio(int id, String nombre, String marca, String modelo, double precioManoObra) {
             this.id = id;
             this.nombre = nombre;
             this.marca = marca;
             this.modelo = modelo;
             this.precioManoObra = precioManoObra;
-            this.repuestos = new Repuesto[1000]; 
+            this.repuestos = new Repuesto[1000];
             this.contadorRepuestos = 0;
             calcularPrecioTotal();
         }
@@ -87,24 +90,50 @@ public class ServiciosModelo {
             }
         }
     }
+    
+    public static void guardarDatos() {
+        DatosServicios datos = new DatosServicios(servicios, contadorServicios, siguienteId);
+        serializador.guardarDatos(ARCHIVO_DATOS, datos);
+    }
 
-    public static boolean agregarServicioConId(int id, String nombre, String marca, String modelo, 
-                                     double precioManoObra) {
+    public static void cargarDatos() {
+        DatosServicios datos = (DatosServicios) serializador.cargarDatos(ARCHIVO_DATOS);
+        if (datos != null) {
+            servicios = datos.servicios;
+            contadorServicios = datos.contadorServicios;
+            siguienteId = datos.siguienteId;
+        }
+    }
+    
+    private static class DatosServicios implements Serializable {
+        private static final long serialVersionUID = 1L;
+        final Servicio[] servicios;
+        final int contadorServicios;
+        final int siguienteId;
+
+        public DatosServicios(Servicio[] servicios, int contadorServicios, int siguienteId) {
+            this.servicios = servicios;
+            this.contadorServicios = contadorServicios;
+            this.siguienteId = siguienteId;
+        }
+    }
+
+     public static boolean agregarServicioConId(int id, String nombre, String marca, String modelo, double precioManoObra) {
         if (contadorServicios >= MAX_SERVICIOS || 
             nombre == null || nombre.trim().isEmpty() ||
             marca == null || marca.trim().isEmpty() ||
             modelo == null || modelo.trim().isEmpty() ||
-            buscarServicio(id) != null) {  //VERIFICAR QUE EL ID NO EXISTA
+            buscarServicio(id) != null) {
             return false;
         }
         
         servicios[contadorServicios++] = new Servicio(id, nombre.trim(), marca.trim(), modelo.trim(), precioManoObra);
         
-        //ACTUALIZAR ID
         if (id >= siguienteId) {
             siguienteId = id + 1;
         }
         
+        guardarDatos();
         return true;
     }
 
@@ -137,17 +166,18 @@ public class ServiciosModelo {
             siguienteId = nuevoId + 1;
         }
         
+        guardarDatos();
         return true;
     }
 
     public static boolean eliminarServicio(int id) {
         for (int i = 0; i < contadorServicios; i++) {
             if (servicios[i] != null && servicios[i].getId() == id) {
-                //MOVER LOS SEVICIOS HACIA ATRAS
                 for (int j = i; j < contadorServicios - 1; j++) {
                     servicios[j] = servicios[j + 1];
                 }
                 servicios[--contadorServicios] = null;
+                guardarDatos();
                 return true;
             }
         }
@@ -166,17 +196,21 @@ public class ServiciosModelo {
         
         if (servicio == null || repuesto == null) return false;
         
-        //VERIFICAR QUE LA MARCA Y EL MODELO COINCIDAN CON EL REPUESTO
         if (!servicio.getMarca().equalsIgnoreCase(repuesto.getMarca()) || 
             !servicio.getModelo().equalsIgnoreCase(repuesto.getModelo())) {
             return false;
         }
         
         servicio.agregarRepuesto(repuesto);
+        guardarDatos();
         return true;
     }
     
     public static int getSiguienteId() {
         return siguienteId;
+    }
+    
+    static {
+        cargarDatos();
     }
 }

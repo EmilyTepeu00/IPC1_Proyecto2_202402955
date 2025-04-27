@@ -113,7 +113,6 @@ public class InicioVista extends javax.swing.JFrame {
     
     public static void main(String args[]) {
     try {
-        // Configurar el look and feel
         for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
             if ("Nimbus".equals(info.getName())) {
                 javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -127,23 +126,23 @@ public class InicioVista extends javax.swing.JFrame {
     
     java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
-            // Crear y mostrar la ventana de inicio
+            //CREAR Y MOSTRAR LA VENTANA DE INICIO
             RegistroModelo registroModelo = RegistroModelo.getInstance();
             InicioVista vista = new InicioVista();
             InicioModelo modelo = new InicioModelo(registroModelo); 
             new InicioControlador(vista, modelo, registroModelo);
             vista.setVisible(true);
             
-            // Crear y mostrar la bitácora (como ventana no modal)
+            //CREAR Y MOSTRAR LA BITACORA COMO NO MODAL
             BitacoraVista bitacora = new BitacoraVista();
             new BitacoraControlador(bitacora);
             bitacora.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
             
-            // Listener para cuando se cierre la ventana principal
+            //LISTENER PARA CUANDO SE CIERRE EL INICIO
             vista.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosing(java.awt.event.WindowEvent e) {
-                    bitacora.dispose(); // Cerrar la bitácora cuando se cierre la ventana principal
+                    bitacora.dispose(); //CERRAR BITACORA AL CERRAR EL INICIO
                 }
             });
             

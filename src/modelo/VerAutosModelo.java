@@ -11,33 +11,58 @@ public class VerAutosModelo {
     private static final String CARPETA_AUTOS = "datos_autos";
     
     public String[][] obtenerAutosUsuario(String usuario) {
+        //OBTENER AUTOS DE ARCHIVOS
         File carpeta = new File(CARPETA_AUTOS);
         File[] archivos = carpeta.listFiles((dir, name) -> name.startsWith(usuario + "_"));
         
-        if (archivos == null || archivos.length == 0) {
+        //OBTENER AUTOS DEL MODELO DE REGISTRO
+        RegistrarAutosModelo.Auto[] autosRegistrados = RegistrarAutosModelo.getInstance().getAutosPorUsuario(usuario);
+        
+        int totalArchivos = (archivos != null) ? archivos.length : 0;
+        int totalRegistrados = (autosRegistrados != null) ? autosRegistrados.length : 0;
+        int totalAutos = totalArchivos + totalRegistrados;
+        
+        if (totalAutos == 0) {
             return null;
         }
         
-        String[][] autos = new String[archivos.length][4];
+        String[][] autos = new String[totalAutos][4];
+        int index = 0;
         
-        for (int i = 0; i < archivos.length; i++) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(archivos[i]))) {
-                String linea;
-                while ((linea = reader.readLine()) != null) {
-                    if (linea.startsWith("Placa: ")) {
-                        autos[i][0] = linea.substring("Placa: ".length()).trim();
-                    } else if (linea.startsWith("Marca: ")) {
-                        autos[i][1] = linea.substring("Marca: ".length()).trim();
-                    } else if (linea.startsWith("Modelo: ")) {
-                        autos[i][2] = linea.substring("Modelo: ".length()).trim();
-                    } else if (linea.startsWith("Imagen: ")) {
-                        autos[i][3] = linea.substring("Imagen: ".length()).trim();
+        //PROCESAR ARCHIVOS
+        if (archivos != null) {
+            for (File archivo : archivos) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+                    String linea;
+                    while ((linea = reader.readLine()) != null) {
+                        if (linea.startsWith("Placa: ")) {
+                            autos[index][0] = linea.substring(7).trim();
+                        } else if (linea.startsWith("Marca: ")) {
+                            autos[index][1] = linea.substring(7).trim();
+                        } else if (linea.startsWith("Modelo: ")) {
+                            autos[index][2] = linea.substring(8).trim();
+                        } else if (linea.startsWith("Imagen: ")) {
+                            autos[index][3] = linea.substring(8).trim();
+                        }
                     }
+                    index++;
+                } catch (IOException e) {
+                    System.err.println("ERROR AL LEER EL ARCHIVO: " + archivo.getName());
                 }
-            } catch (IOException e) {
-                System.err.println("ERROR AL LEER EL ARCHIVO: " + archivos[i].getName());
             }
         }
+        
+        //PROCESAR AUTOS REGISTRADOS
+        if (autosRegistrados != null) {
+            for (RegistrarAutosModelo.Auto auto : autosRegistrados) {
+                autos[index][0] = auto.getPlaca();
+                autos[index][1] = auto.getMarca();
+                autos[index][2] = auto.getModelo();
+                autos[index][3] = auto.getRutaImagen();
+                index++;
+            }
+        }
+        
         return autos;
     }
     

@@ -30,7 +30,7 @@ public class RegistrarAutosControlador {
         this.vista = vista;
         this.menuVista = menuVista;
         this.usuarioActual = usuario;
-        this.modelo = new RegistrarAutosModelo();
+        this.modelo = RegistrarAutosModelo.getInstance();
         configurarListeners();
         DragAndDrop();
         this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();

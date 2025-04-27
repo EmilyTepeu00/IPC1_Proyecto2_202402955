@@ -18,8 +18,7 @@ public class ProgresoControlador {
     
     public ProgresoControlador(ProgresoVista vista, String usuario) {
         this.vista = vista;
-        this.modelo = new ProgresoModelo();
-        this.usuarioActual = usuario;
+        this.modelo = ProgresoModelo.getInstance();
         this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
         configurarVista();

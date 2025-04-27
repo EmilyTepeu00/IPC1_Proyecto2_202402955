@@ -13,7 +13,7 @@ public class RepuestosControlador {
     
     public RepuestosControlador(RepuestosVista vista) {
         this.vista = vista;
-         this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
         //LISTENERS
         vista.getBotonAgregar().addActionListener(new ActionListener() {
@@ -45,18 +45,18 @@ public class RepuestosControlador {
         });
         
         vista.getBotonRegresar().addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuAVista menuVista = new MenuAVista();
-            new MenuAControlador(menuVista, "admin"); 
-            menuVista.setVisible(true);
-            vista.dispose();
-        }
-    });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuAVista menuVista = new MenuAVista();
+                new MenuAControlador(menuVista, "admin"); 
+                menuVista.setVisible(true);
+                vista.dispose();
+            }
+        });
     }
     
     private void abrirAgregarRepuesto() {
-        BitacoraModelo.registrarEvento(usuarioActual, "Agregar Repuesto", "Éxito", "Se abrió la ventana para agregar repeustos");
+        BitacoraModelo.registrarEvento(usuarioActual, "Agregar Repuesto", "Éxito", "Se abrió la ventana para agregar repuestos");
         AgregarRVista agregarVista = new AgregarRVista();
         new AgregarRControlador(agregarVista);
         agregarVista.setVisible(true);
@@ -64,7 +64,7 @@ public class RepuestosControlador {
     }
     
     private void abrirModificarRepuesto() {
-        BitacoraModelo.registrarEvento(usuarioActual, "Modificacion de Repeusto", "Éxito", "Se agregó la ventana para modificar repuestos");
+        BitacoraModelo.registrarEvento(usuarioActual, "Modificacion de Repuesto", "Éxito", "Se agregó la ventana para modificar repuestos");
         ModificarRVista modificarVista = new ModificarRVista();
         new ModificarRControlador(modificarVista);
         modificarVista.setVisible(true);

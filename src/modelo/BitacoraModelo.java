@@ -2,14 +2,14 @@ package modelo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BitacoraModelo {
     private static final int MAX_REGISTROS = 1000;
+    private static final int MAX_LISTENERS = 10;
     private static RegistroBitacora[] registros = new RegistroBitacora[MAX_REGISTROS];
+    private static BitacoraListener[] listeners = new BitacoraListener[MAX_LISTENERS];
     private static int contadorRegistros = 0;
-    private static List<BitacoraListener> listeners = new ArrayList<>();
+    private static int contadorListeners = 0;
     
     public interface BitacoraListener {
         void onNuevoRegistro(RegistroBitacora registro);
@@ -39,12 +39,34 @@ public class BitacoraModelo {
     }
     
     public static void addListener(BitacoraListener listener) {
-        listeners.add(listener);
+        if (contadorListeners >= MAX_LISTENERS) {
+            BitacoraListener[] nuevosListeners = new BitacoraListener[MAX_LISTENERS * 2];
+            for (int i = 0; i < contadorListeners; i++) {
+                nuevosListeners[i] = listeners[i];
+            }
+            listeners = nuevosListeners;
+        }
+        listeners[contadorListeners++] = listener;
+    }
+    
+    public static void removeListener(BitacoraListener listener) {
+        for (int i = 0; i < contadorListeners; i++) {
+            if (listeners[i] == listener) {
+                //MOVER ELEMENTOS RESTANTES
+                for (int j = i; j < contadorListeners - 1; j++) {
+                    listeners[j] = listeners[j + 1];
+                }
+                contadorListeners--;
+                listeners[contadorListeners] = null;
+                break;
+            }
+        }
     }
     
     public static void registrarEvento(String usuario, String accion, String resultado, String detalles) {
         RegistroBitacora nuevo = new RegistroBitacora(usuario, accion, resultado, detalles);
         
+        //MANEJO DE REGISTROS
         if (contadorRegistros < MAX_REGISTROS) {
             registros[contadorRegistros++] = nuevo;
         } else {
@@ -55,14 +77,16 @@ public class BitacoraModelo {
         }
         
         //NOTIFICAR A LOS LISTENERS
-        for (BitacoraListener listener : listeners) {
-            listener.onNuevoRegistro(nuevo);
+        for (int i = 0; i < contadorListeners; i++) {
+            listeners[i].onNuevoRegistro(nuevo);
         }
     }
     
     public static RegistroBitacora[] obtenerRegistros() {
         RegistroBitacora[] registrosActuales = new RegistroBitacora[contadorRegistros];
-        System.arraycopy(registros, 0, registrosActuales, 0, contadorRegistros);
+        for (int i = 0; i < contadorRegistros; i++) {
+            registrosActuales[i] = registros[i];
+        }
         return registrosActuales;
     }
 }

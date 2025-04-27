@@ -1,18 +1,23 @@
 package modelo;
 
+import java.io.Serializable;
+
 public class RepuestosModelo {
     private static final int MAX_REPUESTOS = 100;
     private static Repuesto[] repuestos = new Repuesto[MAX_REPUESTOS];
     private static int contadorRepuestos = 0;
     private static int siguienteId = 1001;
+    private static final String ARCHIVO_DATOS = "repuestos.dat";
+    private static final SerializadorModelo serializador = new SerializadorModelo();
 
-    public static class Repuesto {
+    public static class Repuesto implements Serializable {
         private int id;
         private String nombre;
         private String marca;
         private String modelo;
         private int existencias;
         private double precio;
+        private static final long serialVersionUID = 1L;
 
         public Repuesto(int id, String nombre, String marca, String modelo, int existencias, double precio) {
             this.id = id;
@@ -36,6 +41,34 @@ public class RepuestosModelo {
         public double getPrecio() { return precio; }
         public void setPrecio(double precio) { this.precio = precio; }
     }
+    
+    //METODO DE SERIALIZACION
+    public static void guardarDatos() {
+        DatosRepuestos datos = new DatosRepuestos(repuestos, contadorRepuestos, siguienteId);
+        serializador.guardarDatos(ARCHIVO_DATOS, datos);
+    }
+    
+    public static void cargarDatos() {
+        DatosRepuestos datos = (DatosRepuestos) serializador.cargarDatos(ARCHIVO_DATOS);
+        if (datos != null) {
+            repuestos = datos.repuestos;
+            contadorRepuestos = datos.contadorRepuestos;
+            siguienteId = datos.siguienteId;
+        }
+    }
+    
+    private static class DatosRepuestos implements Serializable {
+        private static final long serialVersionUID = 1L;
+        final Repuesto[] repuestos;
+        final int contadorRepuestos;
+        final int siguienteId;
+
+        public DatosRepuestos(Repuesto[] repuestos, int contadorRepuestos, int siguienteId) {
+            this.repuestos = repuestos;
+            this.contadorRepuestos = contadorRepuestos;
+            this.siguienteId = siguienteId;
+        }
+    }
 
     //PARA GESTIONAR LOS REPUESTOS
     public static int agregarRepuesto(String nombre, String marca, String modelo, int existencias, double precio) {
@@ -43,6 +76,7 @@ public class RepuestosModelo {
         
         int id = siguienteId++;
         repuestos[contadorRepuestos++] = new Repuesto(id, nombre, marca, modelo, existencias, precio);
+        guardarDatos();
         return id;
     }
 
@@ -64,6 +98,7 @@ public class RepuestosModelo {
         repuesto.setModelo(modelo);
         repuesto.setExistencias(existencias);
         repuesto.setPrecio(precio);
+        guardarDatos();
         return true;
     }
 
@@ -76,6 +111,7 @@ public class RepuestosModelo {
                     repuestos[j] = repuestos[j + 1];
                 }
                 contadorRepuestos--;
+                guardarDatos();
                 return true;
             }
         }
@@ -92,4 +128,7 @@ public class RepuestosModelo {
         return siguienteId;
     }
     
+    static {
+        cargarDatos();
+    }
 }
