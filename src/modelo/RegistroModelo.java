@@ -28,17 +28,34 @@ public class RegistroModelo {
         return instancia;
     }
 
-    private static class Cliente {
+    public static class Cliente {
         String dpi;
         String nombreCompleto;
         String contrasena;
         String tipoCliente;
+        String automovil;
 
         public Cliente(String dpi, String nombreCompleto, String contrasena, String tipoCliente) {
             this.dpi = dpi;
             this.nombreCompleto = nombreCompleto;
             this.contrasena = contrasena;
             this.tipoCliente = tipoCliente;
+        }
+        
+        public String getTipoCliente() {
+            return tipoCliente;
+        }
+    
+        public void setTipoCliente(String tipoCliente) {
+            this.tipoCliente = tipoCliente;
+        }
+    
+        public String getAutomovil() {
+            return automovil;
+        }
+    
+        public void setAutomovil(String automovil) {
+            this.automovil = automovil;
         }
     }
 

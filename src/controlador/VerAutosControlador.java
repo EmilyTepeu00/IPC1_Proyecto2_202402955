@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import modelo.VerAutosModelo;
 import modelo.ClientesAutosModelo;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class VerAutosControlador {
     private VerAutosVista vista;
@@ -23,6 +25,7 @@ public class VerAutosControlador {
         this.menuVista = menuVista;
         this.usuarioActual = usuario;
         this.modelo = new VerAutosModelo();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
         configurarButtonGroup();
         configurarListeners();
@@ -110,9 +113,12 @@ public class VerAutosControlador {
     }
     
     private void ordenarAutos(boolean ascendente) {
+        BitacoraModelo.registrarEvento(usuarioActual, "Ordenamiento de Autos", "Éxito", "Se ordenaron los autos de forma ascendete");
         if (autos != null && autos.length > 1) {
             modelo.shellSort(autos, ascendente);
             actualizarTabla();
+        } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Ordenamiento de Autos", "Éxito", "Se ordenaron los autos de forma descendente");
         }
     }
     

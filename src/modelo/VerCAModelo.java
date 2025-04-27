@@ -3,6 +3,7 @@ package modelo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class VerCAModelo {
@@ -107,5 +108,28 @@ public class VerCAModelo {
         File carpetaClientes = new File(CARPETA_CLIENTES);
         File[] archivos = carpetaClientes.listFiles();
         return archivos != null ? archivos.length : 0;
+    }
+    
+    public static void actualizarTipoCliente(String usuario, String nuevoTipo) {
+        File archivoCliente = new File(CARPETA_CLIENTES, usuario + ".txt");
+        File tempFile = new File(CARPETA_CLIENTES, usuario + "_temp.txt");
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivoCliente));
+             FileWriter writer = new FileWriter(tempFile)) {
+            
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                if (linea.startsWith("TipoCliente: ")) {
+                    writer.write("TipoCliente: " + nuevoTipo + "\n");
+                } else {
+                    writer.write(linea + "\n");
+                }
+            }
+        } catch (IOException e) {
+        }
+        
+        if (archivoCliente.delete()) {
+            tempFile.renameTo(archivoCliente);
+        }
     }
 }

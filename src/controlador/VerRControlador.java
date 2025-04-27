@@ -7,14 +7,18 @@ import javax.swing.table.DefaultTableModel;
 import vista.RepuestosVista;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 
 public class VerRControlador {
     private VerRVista vista;
+    private String usuarioActual;
     
     public VerRControlador(VerRVista vista) {
         this.vista = vista;
         cargarTablaRepuestos();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
         //LISTENERS
         vista.getBotonRegresar().addActionListener(new ActionListener() {
@@ -44,6 +48,7 @@ public class VerRControlador {
     }
     
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Ver Repuestos", "Éxito", "Se cerró la ventana de ver repuestos");
         RepuestosVista repuestosVista = new RepuestosVista();
         new RepuestosControlador(repuestosVista);
         repuestosVista.setVisible(true);

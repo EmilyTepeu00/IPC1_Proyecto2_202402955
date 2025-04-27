@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import modelo.InicioModelo;
 import modelo.RegistroModelo;
 import vista.ClientesAutosVista;
+import modelo.BitacoraModelo;
 
 public class MenuAControlador {
     private MenuAVista vista;
@@ -37,6 +38,7 @@ public class MenuAControlador {
     }
     
     private void abrirRepuestos(ActionEvent e) {
+        BitacoraModelo.registrarEvento(usuarioActual, "Abrir Repuestos", "Éxito", "Se abrió los repuestos");
         RepuestosVista repuestosVista = new RepuestosVista();
         new RepuestosControlador(repuestosVista);
         repuestosVista.setVisible(true);
@@ -44,6 +46,7 @@ public class MenuAControlador {
     }
     
     private void abrirServicios() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Abrir Servicios", "Éxito", "Se abró los sevicios");
         ServiciosVista serviciosVista = new ServiciosVista();
         new ServiciosControlador(serviciosVista);
         serviciosVista.setVisible(true);
@@ -51,6 +54,7 @@ public class MenuAControlador {
     }
     
     private void abrirClientesAutos() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Abrir Clientes y Autos", "Éxito", "Se abrió clientes y autos");
         ClientesAutosVista clientesAutosVista = new ClientesAutosVista();
         new ClientesAutosControlador(clientesAutosVista);
         clientesAutosVista.setVisible(true);
@@ -58,16 +62,18 @@ public class MenuAControlador {
     }
     
     private void cerrarSesion(ActionEvent e) {
-        int opcion = JOptionPane.showConfirmDialog(vista, "SEGURO QUE DESEA CERRAR SESION?", 
-            "Confirmar", JOptionPane.YES_NO_OPTION);
+        int opcion = JOptionPane.showConfirmDialog(vista, "SEGURO QUE DESEA CERRAR SESION?", "Confirmar", JOptionPane.YES_NO_OPTION);
     
         if (opcion == JOptionPane.YES_OPTION) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Cierre de sesión", "Éxito", "Sesión finalizada por el usuario");
             InicioVista inicio = new InicioVista();
             RegistroModelo registro = RegistroModelo.getInstance();
             InicioModelo modelo = new InicioModelo(registro);
             new InicioControlador(inicio, modelo, registro);
             vista.dispose();
             inicio.setVisible(true);
+        } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Intento de cierre de sesión", "Cancelado", "Usuario canceló el cierre de sesión");
         }
     }
     

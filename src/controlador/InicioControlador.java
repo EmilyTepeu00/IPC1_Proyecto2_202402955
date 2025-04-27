@@ -8,6 +8,7 @@ import vista.MenuCVista;
 import vista.RegistroVista;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
+import modelo.BitacoraModelo;
 
 public class InicioControlador {
     private final InicioVista vista;
@@ -28,6 +29,7 @@ public class InicioControlador {
         String contrasena = new String(vista.getCampoContraseña().getPassword()).trim();
         
         if (usuario.isEmpty() || contrasena.isEmpty()) {
+            BitacoraModelo.registrarEvento("Sistema", "Intento de inicio de sesion", "Error", "Campos vacios");
             JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -37,17 +39,21 @@ public class InicioControlador {
         switch (tipoUsuario) {
             case "ADMIN":
                 registroModelo.setUsuarioActual(usuario);
+                BitacoraModelo.registrarEvento(usuario, "Inicio de sesión", "Éxito", "Acceso como administrador");
                 abrirMenuAdministrador();
                 break;
             case "MECANICO":
                 registroModelo.setUsuarioActual(usuario);
+                BitacoraModelo.registrarEvento(usuario, "Inicio de sesión", "Éxito", "Acceso como mecánico");
                 abrirMenuAdministrador(); 
                 break;
             case "CLIENTE":
                 registroModelo.setUsuarioActual(usuario);
+                BitacoraModelo.registrarEvento(usuario, "Inicio de sesión", "Éxito", "Acceso como cliente");
                 abrirMenuCliente();
                 break;
             default:
+                BitacoraModelo.registrarEvento(usuario, "Intento de inicio de sesión", "Error", "Credenciales incorrectas");
                 JOptionPane.showMessageDialog(vista, "USUARIO O CONTRASEÑA INCORRECTOS", "ERROR", JOptionPane.ERROR_MESSAGE);
                 vista.getCampoContraseña().setText("");
         }
@@ -68,6 +74,7 @@ public class InicioControlador {
     }
     
     private void abrirRegistro() {
+        BitacoraModelo.registrarEvento("Sistema", "Abrir Registro de Clientes", "Éxito", "Se abrió el registro");
         RegistroVista registroVista = new RegistroVista();
         new RegistroControlador(registroVista, registroModelo, vista); 
         vista.dispose();

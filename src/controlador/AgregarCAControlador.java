@@ -4,17 +4,20 @@ import vista.AgregarCAVista;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import vista.ClientesAutosVista;
-import modelo.InicioModelo;
 import modelo.AgregarCAModelo;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class AgregarCAControlador {
     private AgregarCAVista vista;
     private AgregarCAModelo modelo;
+    private String usuarioActual;
     
     public AgregarCAControlador(AgregarCAVista vista) {
         this.vista = vista;
         this.modelo = new AgregarCAModelo();
         configurarListeners();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
     }
     
     private void configurarListeners() {
@@ -36,23 +39,28 @@ public class AgregarCAControlador {
             );
             
             if (exito) {
+                BitacoraModelo.registrarEvento(usuarioActual, "Registro cliente/auto", "Éxito",  "Cliente: " + nombre + " - Tipo: " + tipoCliente + " - Autos: " + automoviles.split(";").length);
                 JOptionPane.showMessageDialog(vista, "CLIENTE Y AUTOS REGISTRADOS CON EXITO");
                 limpiarCampos();
             } else {
+                BitacoraModelo.registrarEvento(usuarioActual, "Registro cliente/auto", "Error", "El usuario " + usuario + " ya existe ó datos inválidos");
                 JOptionPane.showMessageDialog(vista, "EL USUARIO YA EXISTE O DATOS INVALIDOS", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Validación de datos", "Error", "Campos incompletos o formato incorrecto");
         }
     }
     
-    private boolean validarCampos(String dpi, String nombre, String usuario, String contraseña, String tipoCliente, String automoviles) {
+    private boolean validarCampos(String dpi, String nombre, String usuario, 
+                                String contraseña, String tipoCliente, String automoviles) {
         if (dpi.isEmpty() || nombre.isEmpty() || usuario.isEmpty() || 
             contraseña.isEmpty() || tipoCliente.isEmpty() || automoviles.isEmpty()) {
             JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
-        if (usuario.equals(InicioModelo.ADMIN_USER) || usuario.equals(InicioModelo.MECANICO_USER)) {
-            JOptionPane.showMessageDialog(vista, "NOMBRE DE USUARIO NO PERMITIDO", "ERROR", JOptionPane.ERROR_MESSAGE);
+        if (!tipoCliente.equalsIgnoreCase("NORMAL") && !tipoCliente.equalsIgnoreCase("ORO")) {
+            JOptionPane.showMessageDialog(vista, "TIPO DE CLIENTE DEBE SER 'NORMAL' U 'ORO'", "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
@@ -79,6 +87,7 @@ public class AgregarCAControlador {
     }
     
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Agregar Cliente/Auto", "Éxito", "Se cerró la ventana de agregar clientes y autos");
         ClientesAutosVista clientesVista = new ClientesAutosVista();
         new ClientesAutosControlador(clientesVista);
         clientesVista.setVisible(true);

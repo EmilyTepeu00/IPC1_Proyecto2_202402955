@@ -7,13 +7,17 @@ import vista.VerCAVista;
 import modelo.ClientesAutosModelo;
 import javax.swing.JOptionPane;
 import vista.MenuAVista;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class ClientesAutosControlador {
     private ClientesAutosVista vista;
+    private String usuarioActual;
     
     public ClientesAutosControlador(ClientesAutosVista vista) {
         this.vista = vista;
         configurarListeners();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
     }
 
     private void configurarListeners() {
@@ -32,6 +36,7 @@ public class ClientesAutosControlador {
     }
     
     private void abrirModificarClienteAuto() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Modificar DPI", "Información", "Se pide el DPI del cliente a modificar");
         String dpi = JOptionPane.showInputDialog(vista, "INGRESE EL DPI DEL CLIENTE A MODIFICAR: ");
         if (dpi != null && !dpi.isEmpty()) {
             if (ClientesAutosModelo.buscarClientePorDPI(dpi) != null) {
@@ -40,23 +45,28 @@ public class ClientesAutosControlador {
                 modificarVista.setVisible(true);
                 vista.dispose();
             } else {
+                BitacoraModelo.registrarEvento(usuarioActual, "DPI Cliente", "Error", "El DPI ingresado no existe");
                 JOptionPane.showMessageDialog(vista, "EL DPI INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     
     private void eliminarClienteAuto() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Eliminar DPI", "Información", "Se pide el DPI del cliente a eliminar");
         String dpi = JOptionPane.showInputDialog(vista, "INGRESE EL DPI DEL CLIENTE A ELIMINAR:");
         if (dpi != null && !dpi.isEmpty()) {
             if (ClientesAutosModelo.eliminarCliente(dpi)) {
+                BitacoraModelo.registrarEvento(usuarioActual, "Eliminar DPI", "Éxito", "Cliente eliminado con éxito");
                 JOptionPane.showMessageDialog(vista, "CLIENTE ELIMINADO CON EXITO");
             } else {
+                BitacoraModelo.registrarEvento(usuarioActual, "DPI Cliente", "Error", "El DPI ingresado no existe");
                 JOptionPane.showMessageDialog(vista, "EL DPI INGRESADO NO EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     
     private void abrirVerClientesAutos() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Abrir Clientes y Autos", "Éxito", "Se cabrió la ventana de clientes y autos");
         VerCAVista verVista = new VerCAVista();
         new VerCAControlador(verVista);
         verVista.setVisible(true);
@@ -64,6 +74,7 @@ public class ClientesAutosControlador {
     }
     
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Agregar Cliente/Auto", "Éxito", "Se cerró la ventana de agregar cliente y autos");
         MenuAVista menuVista = new MenuAVista();
         new MenuAControlador(menuVista, "admin");
         menuVista.setVisible(true);

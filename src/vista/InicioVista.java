@@ -3,6 +3,7 @@ package vista;
 import modelo.RegistroModelo;
 import modelo.InicioModelo;
 import controlador.InicioControlador;
+import controlador.BitacoraControlador;
 
 public class InicioVista extends javax.swing.JFrame {
 
@@ -111,28 +112,45 @@ public class InicioVista extends javax.swing.JFrame {
     }
     
     public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+    try {
+        // Configurar el look and feel
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ClassNotFoundException | InstantiationException | 
-                 IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(InicioVista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                RegistroModelo registroModelo = RegistroModelo.getInstance();
-                InicioVista vista = new InicioVista();
-                InicioModelo modelo = new InicioModelo(registroModelo); 
-                new InicioControlador(vista, modelo, registroModelo);
-                vista.setVisible(true);
-            }
-        });
+    } catch (ClassNotFoundException | InstantiationException | 
+             IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(InicioVista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            // Crear y mostrar la ventana de inicio
+            RegistroModelo registroModelo = RegistroModelo.getInstance();
+            InicioVista vista = new InicioVista();
+            InicioModelo modelo = new InicioModelo(registroModelo); 
+            new InicioControlador(vista, modelo, registroModelo);
+            vista.setVisible(true);
+            
+            // Crear y mostrar la bitácora (como ventana no modal)
+            BitacoraVista bitacora = new BitacoraVista();
+            new BitacoraControlador(bitacora);
+            bitacora.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+            
+            // Listener para cuando se cierre la ventana principal
+            vista.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    bitacora.dispose(); // Cerrar la bitácora cuando se cierre la ventana principal
+                }
+            });
+            
+            bitacora.setVisible(true);
+        }
+    });
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonIniciar;

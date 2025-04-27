@@ -9,6 +9,7 @@ import modelo.RegistroModelo;
 import vista.RegistrarAutosVista;
 import vista.VerAutosVista;
 import vista.ProgresoVista;
+import modelo.BitacoraModelo;
 
 public class MenuCControlador {
     private MenuCVista vista;
@@ -20,6 +21,7 @@ public class MenuCControlador {
         this.usuarioActual = usuario;
         mostrarBienvenida();
         configurarListeners();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
     }
     
     private void mostrarBienvenida() {
@@ -35,6 +37,7 @@ public class MenuCControlador {
     }
     
     private void abrirRegistroAutos() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Registro de Autos", "Éxito", "Se abrió el registro de autos");
         RegistrarAutosVista registrarAutos = new RegistrarAutosVista();
         new RegistrarAutosControlador(registrarAutos, vista, usuarioActual);
         vista.setVisible(false);
@@ -42,6 +45,7 @@ public class MenuCControlador {
     }
     
     private void abrirVerAutos() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Ver Autos", "Éxito", "Se abrió la ventana para ver autos");
         VerAutosVista verAutos = new VerAutosVista();
         new VerAutosControlador(verAutos, vista, usuarioActual);
         vista.setVisible(false);
@@ -49,6 +53,7 @@ public class MenuCControlador {
     }
     
     private void abrirProgreso(ActionEvent e) {
+        BitacoraModelo.registrarEvento(usuarioActual, "Progreso", "Éxito", "Se abrió la ventana para el progreso");
         ProgresoVista progresoVista = new ProgresoVista();
         new ProgresoControlador(progresoVista, usuarioActual);
         vista.setVisible(false);
@@ -60,12 +65,15 @@ public class MenuCControlador {
             "CONFIRMAR", JOptionPane.YES_NO_OPTION);
     
         if (opcion == JOptionPane.YES_OPTION) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Cierre de sesión", "Éxito", "Sesión finalizada por el usuario");
             InicioVista inicio = new InicioVista();
             RegistroModelo registro = RegistroModelo.getInstance();
             InicioModelo modelo = new InicioModelo(registro); 
             new InicioControlador(inicio, modelo, registro);
             vista.dispose();
             inicio.setVisible(true);
+        } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Intento de cierre de sesión", "Cancelado", "Usuario canceló el cierre de sesión");
         }
     }
     

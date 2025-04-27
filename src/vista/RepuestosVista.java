@@ -109,16 +109,6 @@ public class RepuestosVista extends javax.swing.JFrame {
         return botonRegresar;
     }
     
-    public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            RepuestosVista vista = new RepuestosVista();
-            new RepuestosControlador(vista);
-            vista.setVisible(true);
-        }
-    });
-}
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonEliminar;

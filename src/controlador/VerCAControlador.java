@@ -4,14 +4,18 @@ import vista.VerCAVista;
 import modelo.VerCAModelo;
 import javax.swing.table.DefaultTableModel;
 import vista.ClientesAutosVista;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class VerCAControlador {
     private VerCAVista vista;
+    private String usuarioActual;
     
     public VerCAControlador(VerCAVista vista) {
         this.vista = vista;
         cargarTablaClientes();
         configurarListeners();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
     }
     
     private void configurarListeners() {
@@ -32,6 +36,7 @@ public class VerCAControlador {
     }
     
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Ver Clientes y Autos", "Éxito", "Se cerró la ventana de ver clientes y autos");
         ClientesAutosVista clientesVista = new ClientesAutosVista();
         new ClientesAutosControlador(clientesVista);
         clientesVista.setVisible(true);

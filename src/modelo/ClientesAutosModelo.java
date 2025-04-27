@@ -11,7 +11,6 @@ public class ClientesAutosModelo {
     private static final int MAX_CLIENTES = 100;
     private static Cliente[] clientes = new Cliente[MAX_CLIENTES];
     private static int contadorClientes = 0;
-    private static final String ARCHIVO_CLIENTES = "clientes.dat";
     private static final String CARPETA_AUTOS = "datos_autos/";
     private static final String CARPETA_CLIENTES = "datos_clientes/";
 
@@ -33,7 +32,7 @@ public class ClientesAutosModelo {
             this.automovil = automovil;
         }
 
-        //GETTERS
+        // Getters
         public String getDpi() { return dpi; }
         public String getNombreCompleto() { return nombreCompleto; }
         public String getUsuario() { return usuario; }
@@ -41,7 +40,7 @@ public class ClientesAutosModelo {
         public String getTipoCliente() { return tipoCliente; }
         public String getAutomovil() { return automovil; }
         
-        //SETTERS
+        // Setters
         public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
         public void setUsuario(String usuario) { this.usuario = usuario; }
         public void setContraseña(String contraseña) { this.contraseña = contraseña; }
@@ -65,12 +64,7 @@ public class ClientesAutosModelo {
                 
                 try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
                     String linea;
-                    String dpi = "";
-                    String nombre = "";
-                    String usuario = "";
-                    String contraseña = "";
-                    String tipoCliente = "";
-                    String automovil = "";
+                    String dpi = "", nombre = "", usuario = "", contraseña = "", tipoCliente = "", automovil = "";
                     
                     while ((linea = reader.readLine()) != null) {
                         if (linea.startsWith("DPI: ")) dpi = linea.substring(5);
@@ -78,29 +72,6 @@ public class ClientesAutosModelo {
                         else if (linea.startsWith("Usuario: ")) usuario = linea.substring(9);
                         else if (linea.startsWith("Contraseña: ")) contraseña = linea.substring(12);
                         else if (linea.startsWith("TipoCliente: ")) tipoCliente = linea.substring(13);
-                    }
-                    
-                    final String usuarioFinal = usuario;
-                    File carpetaAutos = new File(CARPETA_AUTOS);
-                    File[] archivosAutos = carpetaAutos.listFiles(new java.io.FilenameFilter() {
-                        public boolean accept(File dir, String name) {
-                            return name.startsWith(usuarioFinal + "_");
-                        }
-                    });
-                    
-                    if (archivosAutos != null && archivosAutos.length > 0) {
-                        try (BufferedReader autoReader = new BufferedReader(new FileReader(archivosAutos[0]))) {
-                            String lineaAuto;
-                            while ((lineaAuto = autoReader.readLine()) != null) {
-                                if (lineaAuto.startsWith("Placa: ")) {
-                                    automovil = "Placa: " + lineaAuto.substring(7);
-                                } else if (lineaAuto.startsWith("Marca: ")) {
-                                    automovil += ", Marca: " + lineaAuto.substring(7);
-                                } else if (lineaAuto.startsWith("Modelo: ")) {
-                                    automovil += ", Modelo: " + lineaAuto.substring(8);
-                                }
-                            }
-                        }
                     }
                     
                     clientes[contadorClientes++] = new Cliente(dpi, nombre, usuario, contraseña, tipoCliente, automovil);
@@ -112,10 +83,26 @@ public class ClientesAutosModelo {
     }
 
     public static boolean guardarClientes() {
-        return true;
+        try {
+            for (int i = 0; i < contadorClientes; i++) {
+                Cliente c = clientes[i];
+                File archivo = new File(CARPETA_CLIENTES + c.getUsuario() + ".txt");
+                
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+                    writer.write("DPI: " + c.getDpi() + "\n");
+                    writer.write("Nombre: " + c.getNombreCompleto() + "\n");
+                    writer.write("Usuario: " + c.getUsuario() + "\n");
+                    writer.write("Contraseña: " + c.getContraseña() + "\n");
+                    writer.write("TipoCliente: " + c.getTipoCliente() + "\n");
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            System.err.println("ERROR AL GUARDAR CLIENTES: " + e.getMessage());
+            return false;
+        }
     }
 
-    //BUSCAR CLIENTE SEGUN SU DPI
     public static Cliente buscarClientePorDPI(String dpi) {
         for (int i = 0; i < contadorClientes; i++) {
             if (clientes[i].getDpi().equals(dpi)) {
@@ -125,10 +112,9 @@ public class ClientesAutosModelo {
         return null;
     }
 
-    //BUSCAR USUARIO
     public static Cliente buscarClientePorUsuario(String usuario) {
         for (int i = 0; i < contadorClientes; i++) {
-            if (clientes[i].getUsuario().equals(usuario)) { 
+            if (clientes[i].getUsuario().equals(usuario)) {
                 return clientes[i];
             }
         }
@@ -147,24 +133,11 @@ public class ClientesAutosModelo {
         }
         
         clientes[contadorClientes++] = new Cliente(dpi, nombre, usuario, contraseña, tipoCliente, automovil);
-        
-        // Guardar en archivo
-        try {
-            File archivoCliente = new File(CARPETA_CLIENTES + usuario + ".txt");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoCliente))) {
-                writer.write("DPI: " + dpi + "\n");
-                writer.write("Nombre: " + nombre + "\n");
-                writer.write("Usuario: " + usuario + "\n");
-                writer.write("Contraseña: " + contraseña + "\n");
-                writer.write("TipoCliente: " + tipoCliente + "\n");
-            }
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        return guardarClientes();
     }
 
-    public static boolean modificarCliente(String dpi, String nombre, String usuario, String contraseña, String tipoCliente, String automovil) {
+    public static boolean modificarCliente(String dpi, String nombre, String usuario, 
+                                         String contraseña, String tipoCliente, String automovil) {
         Cliente cliente = buscarClientePorDPI(dpi);
         if (cliente == null) return false;
         
@@ -174,44 +147,21 @@ public class ClientesAutosModelo {
         cliente.setTipoCliente(tipoCliente);
         cliente.setAutomovil(automovil);
         
-        //ACTUALIZAR ARCHIVO
-        try {
-            File archivoCliente = new File(CARPETA_CLIENTES + cliente.getUsuario() + ".txt");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoCliente))) {
-                writer.write("DPI: " + dpi + "\n");
-                writer.write("Nombre: " + nombre + "\n");
-                writer.write("Usuario: " + usuario + "\n");
-                writer.write("Contraseña: " + contraseña + "\n");
-                writer.write("TipoCliente: " + tipoCliente + "\n");
-            }
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        return guardarClientes();
     }
 
     public static boolean eliminarCliente(String dpi) {
         for (int i = 0; i < contadorClientes; i++) {
             if (clientes[i].getDpi().equals(dpi)) {
-                //ELIMINAR ARCHIVOS ASOCIADOS
-                String usuario = clientes[i].getUsuario();
-                new File(CARPETA_CLIENTES + usuario + ".txt").delete();
-                
-                //ELIMINAR AUTOS ASOCIADOS
-                File carpetaAutos = new File(CARPETA_AUTOS);
-                File[] archivosAutos = carpetaAutos.listFiles((dir, name) -> name.startsWith(usuario + "_"));
-                if (archivosAutos != null) {
-                    for (File archivoAuto : archivosAutos) {
-                        archivoAuto.delete();
-                    }
-                }
+                //ELIMINAR ARCHIVO DEL CLIENTE
+                new File(CARPETA_CLIENTES + clientes[i].getUsuario() + ".txt").delete();
                 
                 //MOVER ELEMENTOS RESTANTES
                 for (int j = i; j < contadorClientes - 1; j++) {
                     clientes[j] = clientes[j + 1];
                 }
                 contadorClientes--;
-                return true;
+                return guardarClientes();
             }
         }
         return false;
@@ -224,8 +174,7 @@ public class ClientesAutosModelo {
     }
     
     public static String[] obtenerDatosAuto(String usuario, String placa) {
-        final String usuarioFinal = usuario; 
-        File archivoAuto = new File(CARPETA_AUTOS + usuarioFinal + "_" + placa + ".txt");
+        File archivoAuto = new File(CARPETA_AUTOS + usuario + "_" + placa + ".txt");
         if (!archivoAuto.exists()) return null;
         
         try (BufferedReader reader = new BufferedReader(new FileReader(archivoAuto))) {

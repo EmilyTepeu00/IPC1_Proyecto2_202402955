@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import modelo.RegistrarAutosModelo;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class RegistrarAutosControlador {
     private RegistrarAutosVista vista;
@@ -31,6 +33,7 @@ public class RegistrarAutosControlador {
         this.modelo = new RegistrarAutosModelo();
         configurarListeners();
         DragAndDrop();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
     }
 
     private void configurarListeners() {
@@ -58,6 +61,7 @@ public class RegistrarAutosControlador {
                         procesarImagen(file);
                     }
                 } catch (Exception ex) {
+                    BitacoraModelo.registrarEvento(usuarioActual, "Procesamiento de Imagen", "Error", "No se puedo procesar la imagen");
                     JOptionPane.showMessageDialog(vista, "ERROR AL PROCESAR LA IMAGEN: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -80,11 +84,13 @@ public class RegistrarAutosControlador {
         try {
             String fileName = file.getName().toLowerCase();
             if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
+                BitacoraModelo.registrarEvento(usuarioActual, "Extensiones", "Error", "Se debe ingresar un archivo .jpg ó .jpeg");
                 throw new IOException("SOLO SE PERMITEN ARCHIVOS .jpg o .jpeg");
             }
             
             BufferedImage originalImage = ImageIO.read(file);
             if (originalImage == null) {
+                BitacoraModelo.registrarEvento(usuarioActual, "Imagen", "Error", "La imagen no es válida");
                 throw new IOException("LA IMAGEN NO ES VALIDA");
             }
             
@@ -101,6 +107,7 @@ public class RegistrarAutosControlador {
             vista.getPanelImagen().getGraphics().drawImage(scaledImage, 0, 0, null);
             
         } catch (IOException ex) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Imagen", "Error", "No se puedo cargar la imagen");
             JOptionPane.showMessageDialog(vista, "ERROR AL CARGAR LA IMAGEN: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -111,6 +118,7 @@ public class RegistrarAutosControlador {
         String modeloText = vista.getCampoModelo().getText().trim();
         
         if (placa.isEmpty() || marca.isEmpty() || modeloText.isEmpty() || imagenAuto == null) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Validación de datos", "Error", "Debe llenar todos los campos");
             JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -118,6 +126,7 @@ public class RegistrarAutosControlador {
         //VERIFICAR SI EL AUTO YA EXISTE
         String[] autoExistente = modelo.buscarAuto(usuarioActual, placa);
         if (autoExistente != null) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Validación de Placa", "Error", "La palaca ingresada ya existe");
             JOptionPane.showMessageDialog(vista, "LA PLACA INGRESADA YA EXISTE", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -126,9 +135,11 @@ public class RegistrarAutosControlador {
         boolean exito = modelo.guardarAuto(usuarioActual, placa, marca, modeloText, imagenAuto);
         
         if (exito) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Registro de Auto", "Éxito", "Se registró el auto correctamente");
             JOptionPane.showMessageDialog(vista, "AUTO REGISTRADO CON EXITO", "EXITO", JOptionPane.INFORMATION_MESSAGE);
             limpiarCampos();
         } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Regsitro de Autos", "Error", "No se pudo registrar el auto");
             JOptionPane.showMessageDialog(vista, "ERROR AL GUARDAR EL AUTO", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }

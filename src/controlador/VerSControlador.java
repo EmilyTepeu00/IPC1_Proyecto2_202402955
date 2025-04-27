@@ -7,15 +7,19 @@ import javax.swing.table.DefaultTableModel;
 import vista.ServiciosVista;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class VerSControlador {
     private VerSVista vista;
+    private String usuarioActual;
     
     public VerSControlador(VerSVista vista) {
         this.vista = vista;
         cargarTablaServicios();
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
-        // Listeners
+        //LISTENERS
         vista.getBotonRegresar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -51,6 +55,7 @@ public class VerSControlador {
     }
     
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Ver Servicios", "Éxito", "Se cerró la ventana de ver servicios");
         ServiciosVista serviciosVista = new ServiciosVista();
         new ServiciosControlador(serviciosVista);
         serviciosVista.setVisible(true);

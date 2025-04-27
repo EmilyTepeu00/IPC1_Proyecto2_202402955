@@ -6,15 +6,19 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import vista.ClientesAutosVista;
 import java.io.File;
+import modelo.BitacoraModelo;
+import modelo.RegistroModelo;
 
 public class ModificarCAControlador {
     private ModificarCAVista vista;
     private String dpiCliente;
     private String usuarioCliente;
+    private String usuarioActual;
 
     public ModificarCAControlador(ModificarCAVista vista, String dpi) {
         this.vista = vista;
         this.dpiCliente = dpi;
+        this.usuarioActual = RegistroModelo.getInstance().getUsuarioActual();
         
         cargarDatosCliente();
         configurarListeners();
@@ -46,6 +50,7 @@ public class ModificarCAControlador {
 
         if (nombre.isEmpty() || usuario.isEmpty() || contraseña.isEmpty() || 
             tipoCliente.isEmpty() || automovil.isEmpty()) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Validación de campos", "Error", "Debe llenar todos los campos");
             JOptionPane.showMessageDialog(vista, "DEBE LLENAR TODOS LOS CAMPOS", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -68,14 +73,17 @@ public class ModificarCAControlador {
         );
 
         if (exito) {
+            BitacoraModelo.registrarEvento(usuarioActual, "Modificación de Cliente/Auto", "Error", "Se modificó el cliente");
             JOptionPane.showMessageDialog(vista, "CLIENTE MODIFICADO CON EXITO");
             regresar();
         } else {
+            BitacoraModelo.registrarEvento(usuarioActual, "Modificación de Cliente/Auto", "Error", "No se pudo modificar el cliente");
             JOptionPane.showMessageDialog(vista, "ERROR AL MODIFICAR EL CLIENTE", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void regresar() {
+        BitacoraModelo.registrarEvento(usuarioActual, "Cierre de Modificar Cliente/Auto", "Éxito", "Se cerró la ventana de modificar clientes y autos");
         ClientesAutosVista clientesVista = new ClientesAutosVista();
         new ClientesAutosControlador(clientesVista);
         clientesVista.setVisible(true);
