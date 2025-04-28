@@ -20,17 +20,18 @@ public class ServiciosModelo {
         private double precioManoObra;
         private double precioTotal;
         private int contadorRepuestos;
-        private static final long serialVersionUID = 1L;
+        private int contadorUsos;
 
         public Servicio(int id, String nombre, String marca, String modelo, double precioManoObra) {
             this.id = id;
-            this.nombre = nombre;
-            this.marca = marca;
-            this.modelo = modelo;
-            this.precioManoObra = precioManoObra;
-            this.repuestos = new Repuesto[1000];
-            this.contadorRepuestos = 0;
-            calcularPrecioTotal();
+        this.nombre = nombre;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.repuestos = new Repuesto[10]; 
+        this.contadorRepuestos = 0;
+        this.precioManoObra = precioManoObra;
+        this.precioTotal = precioManoObra;
+        this.contadorUsos = 0;
         }
 
         public void agregarRepuesto(Repuesto repuesto) {
@@ -50,7 +51,7 @@ public class ServiciosModelo {
             this.precioTotal = sumaRepuestos + precioManoObra;
         }
 
-        // GETTERS
+        // GETTERS 
         public int getId() { return id; }
         public String getNombre() { return nombre; }
         public String getMarca() { return marca; }
@@ -59,6 +60,8 @@ public class ServiciosModelo {
         public int getContadorRepuestos() { return contadorRepuestos; }
         public double getPrecioManoObra() { return precioManoObra; }
         public double getPrecioTotal() { return precioTotal; }
+        public int getContadorUsos() { return contadorUsos; }
+        public void incrementarContadorUsos() { this.contadorUsos++; }
         
         // SETTERS
         public void setId(int id) { 
@@ -212,5 +215,28 @@ public class ServiciosModelo {
     
     static {
         cargarDatos();
+    }
+    
+    public static void servicioCompletado(int idServicio) {
+        Servicio servicio = buscarServicio(idServicio);
+        if (servicio != null) {
+            servicio.incrementarContadorUsos();
+            for (int i = 0; i < servicio.getContadorRepuestos(); i++) {
+                Repuesto repuesto = servicio.getRepuestos()[i];
+                if (repuesto != null) {
+                    repuesto.incrementarContadorUsos();
+                }
+            }
+            guardarDatos();
+        }
+    }
+    
+    public static Servicio buscarServicioPorNombre(String nombre) {
+        for (int i = 0; i < contadorServicios; i++) {
+            if (servicios[i] != null && servicios[i].getNombre().equalsIgnoreCase(nombre)) {
+                return servicios[i];
+            }
+        }
+        return null;
     }
 }

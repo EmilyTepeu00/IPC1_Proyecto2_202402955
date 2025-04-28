@@ -1,6 +1,7 @@
 package modelo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class RepuestosModelo {
     private static final int MAX_REPUESTOS = 100;
@@ -18,6 +19,7 @@ public class RepuestosModelo {
         private int existencias;
         private double precio;
         private static final long serialVersionUID = 1L;
+        private int contadorUsos;
 
         public Repuesto(int id, String nombre, String marca, String modelo, int existencias, double precio) {
             this.id = id;
@@ -26,6 +28,7 @@ public class RepuestosModelo {
             this.modelo = modelo;
             this.existencias = existencias;
             this.precio = precio;
+            this.contadorUsos = 0;
         }
 
         //GETTERS Y SETTERS
@@ -40,9 +43,10 @@ public class RepuestosModelo {
         public void setExistencias(int existencias) { this.existencias = existencias; }
         public double getPrecio() { return precio; }
         public void setPrecio(double precio) { this.precio = precio; }
+        public int getContadorUsos() { return contadorUsos; }
+        public void incrementarContadorUsos() { this.contadorUsos++; }
     }
     
-    //METODO DE SERIALIZACION
     public static void guardarDatos() {
         DatosRepuestos datos = new DatosRepuestos(repuestos, contadorRepuestos, siguienteId);
         serializador.guardarDatos(ARCHIVO_DATOS, datos);
@@ -70,19 +74,40 @@ public class RepuestosModelo {
         }
     }
 
-    //PARA GESTIONAR LOS REPUESTOS
     public static int agregarRepuesto(String nombre, String marca, String modelo, int existencias, double precio) {
-        if (contadorRepuestos >= MAX_REPUESTOS) return -1;
-        
-        int id = siguienteId++;
-        repuestos[contadorRepuestos++] = new Repuesto(id, nombre, marca, modelo, existencias, precio);
+        if (contadorRepuestos >= MAX_REPUESTOS) {
+            return -1; //NO HAY ESPACIO
+        }
+        Repuesto nuevoRepuesto = new Repuesto(siguienteId, nombre, marca, modelo, existencias, precio);
+        repuestos[contadorRepuestos] = nuevoRepuesto;
+        contadorRepuestos++;
+        siguienteId++;
         guardarDatos();
-        return id;
+        return siguienteId - 1;
+    }
+    
+    public static Repuesto[] obtenerRepuestosMasUsados() {
+        //CREAR COPIA CON LOS REPUESTOS EXISTENTES
+        Repuesto[] copia = Arrays.copyOf(repuestos, contadorRepuestos);
+    
+        //ORDENAR POR contadorUsos DE MAYOR A MENOR
+        for (int i = 0; i < copia.length - 1; i++) {
+            for (int j = 0; j < copia.length - i - 1; j++) {
+                if (copia[j] == null || (copia[j+1] != null && 
+                    copia[j].getContadorUsos() < copia[j+1].getContadorUsos())) {
+                    Repuesto temp = copia[j];
+                    copia[j] = copia[j+1];
+                    copia[j+1] = temp;
+                }
+            }
+        }
+    
+        return copia;
     }
 
     public static Repuesto buscarRepuesto(int id) {
         for (int i = 0; i < contadorRepuestos; i++) {
-            if (repuestos[i].getId() == id) {
+            if (repuestos[i] != null && repuestos[i].getId() == id) {
                 return repuestos[i];
             }
         }
@@ -102,11 +127,10 @@ public class RepuestosModelo {
         return true;
     }
 
-    //PARA ELIMINAR REPUESTOS
     public static boolean eliminarRepuesto(int id) {
         for (int i = 0; i < contadorRepuestos; i++) {
-            if (repuestos[i].getId() == id) {
-                //MOVER LOS REPUESTOS ANTERIORES HACIA ATRAS
+            if (repuestos[i] != null && repuestos[i].getId() == id) {
+                // Mover los repuestos posteriores hacia atrás
                 for (int j = i; j < contadorRepuestos - 1; j++) {
                     repuestos[j] = repuestos[j + 1];
                 }

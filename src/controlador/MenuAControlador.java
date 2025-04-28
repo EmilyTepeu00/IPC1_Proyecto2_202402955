@@ -34,7 +34,7 @@ public class MenuAControlador {
         vista.getBotonServicios().addActionListener(e -> abrirServicios());
         vista.getBotonClientes().addActionListener(e -> abrirClientesAutos());
         vista.getBotonProgreso().addActionListener(e -> mostrarMensaje("Progreso"));
-        vista.getBotonReporte().addActionListener(e -> mostrarMensaje("Reportes"));
+        vista.getBotonReporte().addActionListener(e -> generarReportes());
     }
     
     private void abrirRepuestos(ActionEvent e) {
@@ -60,6 +60,13 @@ public class MenuAControlador {
         clientesAutosVista.setVisible(true);
         vista.setVisible(false);
     }
+    
+    private void generarReportes() {
+        ReportesControlador reportes = new ReportesControlador(vista);
+        reportes.generarTodosReportes();
+        BitacoraModelo.registrarEvento(usuarioActual, "Generación de Reportes", "Éxito", "Se han generado los reportes");
+        JOptionPane.showMessageDialog(vista, "SE HAN GENERADO TODOS LOS REPORTES", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+    }   
     
     private void cerrarSesion(ActionEvent e) {
         int opcion = JOptionPane.showConfirmDialog(vista, "SEGURO QUE DESEA CERRAR SESION?", "Confirmar", JOptionPane.YES_NO_OPTION);

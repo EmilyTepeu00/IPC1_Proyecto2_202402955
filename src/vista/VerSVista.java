@@ -13,7 +13,6 @@ public class VerSVista extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
-        botonRegresar = new javax.swing.JButton();
         botonRegresar1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -34,9 +33,6 @@ public class VerSVista extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tabla);
 
-        botonRegresar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        botonRegresar.setText("REGRESAR");
-
         botonRegresar1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         botonRegresar1.setText("REGRESAR");
 
@@ -56,11 +52,6 @@ public class VerSVista extends javax.swing.JFrame {
                 .addGap(258, 258, 258)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(208, 208, 208)
-                    .addComponent(botonRegresar)
-                    .addContainerGap(305, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -72,11 +63,6 @@ public class VerSVista extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(botonRegresar1)
                 .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(225, 225, 225)
-                    .addComponent(botonRegresar)
-                    .addContainerGap(226, Short.MAX_VALUE)))
         );
 
         pack();
@@ -92,7 +78,6 @@ public class VerSVista extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonRegresar;
     private javax.swing.JButton botonRegresar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
